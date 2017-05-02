@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.params=numInputs
+comment0.target=InputLayer(int)
+comment0.text=\r\n\ Creates\ a\ new\ input\ layer\r\n\ @param\ numInputs\ number\ of\ inputs\ to\ the\ network\r\n
+comment1.params=
+comment1.target=double[][]\ getWeights()
+comment2.params=
+comment2.target=double[]\ getBias()
+comment3.params=input
+comment3.target=double[]\ propogate(double[])
+numComments=4

@@ -1,0 +1,20 @@
+#BlueJ class context
+comment0.params=playerColor
+comment0.target=Board(boolean)
+comment0.text=\r\n\ @param\ playerColor\ color\ of\ player\ (true\ -\ white,\ false\ -\ black)\r\n
+comment1.params=
+comment1.target=void\ setUp()
+comment2.params=
+comment2.target=Piece[][]\ getPieces()
+comment2.text=\r\n\ @return\ 2d\ array\ of\ pieces\r\n
+comment3.params=
+comment3.target=boolean\ getPlayerColor()
+comment3.text=\r\n\ @return\ player\ color\ (true\ -\ white,\ false\ -\ black)\r\n
+comment4.params=row\ col
+comment4.target=Piece\ getPiece(int,\ int)
+comment4.text=\r\n\ @param\ row\ of\ desired\ piece\r\n\ @param\ column\ of\ desired\ piece\r\n\ @return\ piece\ at\ requested\ position\r\n
+comment5.params=piece\ row\ col
+comment5.target=boolean\ movePiece(Piece,\ int,\ int)
+comment6.params=
+comment6.target=java.lang.String\ toString()
+numComments=7

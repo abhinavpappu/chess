@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.params=structure
+comment0.target=ANN(int[])
+comment0.text=\r\n\ Creates\ a\ new\ classifier\ network\r\n
+comment1.params=input
+comment1.target=double[]\ predict(double[])
+numComments=2

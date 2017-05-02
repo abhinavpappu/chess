@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.params=numWeights\ activation
+comment0.target=Neuron(int,\ Activation)
+comment0.text=\r\n\ Creates\ a\ new\ neuron\ initialized\ with\ random\ weigths\ and\ bias\r\n\ @param\ numWeights\ number\ of\ weights\ to\ initialize\ neuron\ with\r\n\ @param\ activation\ activation\ function\ to\ use\r\n
+comment1.params=
+comment1.target=double[]\ getWeights()
+comment2.params=
+comment2.target=double\ getBias()
+comment3.params=input
+comment3.target=double\ process(double[])
+comment3.text=\r\n\ Multiplies\ weights\ to\ corresponding\ input,\ adds\ bias,\ and\ returns\ activated\ result\r\n\ @param\ input\ the\ input\ to\ process\r\n\ @return\ output\ after\ processing\ input\r\n
+numComments=4

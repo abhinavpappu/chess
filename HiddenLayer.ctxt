@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.params=numInputs\ numOutputs
+comment0.target=HiddenLayer(int,\ int)
+comment0.text=\r\n\ Creates\ a\ new\ hidden\ layer\ with\ tanh\ neurons\r\n\ @param\ numInputs\ number\ of\ inputs\ to\ this\ layer\ (number\ of\ outputs\ from\ previous\ layer)\r\n\ @param\ numOutputs\ number\ of\ outputs\ from\ this\ layer\r\n
+comment1.params=
+comment1.target=double[][]\ getWeights()
+comment2.params=
+comment2.target=double[]\ getBias()
+comment3.params=input
+comment3.target=double[]\ propogate(double[])
+numComments=4

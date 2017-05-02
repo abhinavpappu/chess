@@ -1,0 +1,6 @@
+#BlueJ class context
+comment0.params=output
+comment0.target=double\ activate(double)
+comment1.params=activatedOutput
+comment1.target=double\ derivative(double)
+numComments=2

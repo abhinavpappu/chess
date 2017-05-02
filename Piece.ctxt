@@ -1,0 +1,16 @@
+#BlueJ class context
+comment0.params=
+comment0.target=int\ getValue()
+comment1.params=
+comment1.target=java.lang.String\ getIcon()
+comment2.params=
+comment2.target=boolean\ getColor()
+comment3.params=
+comment3.target=int\ getRow()
+comment4.params=
+comment4.target=int\ getColumn()
+comment5.params=board
+comment5.target=java.util.ArrayList\ getMoves(Board)
+comment6.params=row\ col
+comment6.target=Piece\ move(int,\ int)
+numComments=7
