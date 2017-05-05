@@ -37,8 +37,8 @@ public class ANN
         return output;
     }
     
-    private void trainOne(double[] input, double[] output, learningRate){
-        double error = 
+    private void trainOne(double[] input, double[] output, double learningRate){
+        //double error = 
     }
     
     public void train(double[][] inputs, double[][] outputs, int iterations, double learningRate){

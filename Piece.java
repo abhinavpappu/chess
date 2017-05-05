@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public interface Piece
 {
     int getValue();
+    int getNum();
     String getIcon();
     boolean getColor();
     int getRow();

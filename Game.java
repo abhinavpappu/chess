@@ -48,7 +48,6 @@ public class Game extends JApplet implements MouseListener, MouseMotionListener
         mouseY = 0;
         
         board = new Board(true); //give user choice of being white or black later
-        board.setUp();
         
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -92,6 +91,7 @@ public class Game extends JApplet implements MouseListener, MouseMotionListener
         int mouseRow = e.getY() / squareHeight;
         int mouseCol = e.getX() / squareWidth;
         if(!board.movePiece(selectedPiece, mouseRow, mouseCol)){
+            //if the move fails (e.g. attempted to move piece of opposite color), then piece is put back in correct spot
             board.getPieces()[selectedPiece.getRow()][selectedPiece.getColumn()] = selectedPiece;
         }
         dragState = -1;
@@ -135,8 +135,9 @@ public class Game extends JApplet implements MouseListener, MouseMotionListener
                 drawDragPiece(g);
                 break;
             case -1:
-                repaintSurrounding(g);
-                repaintSurrounding(g, mouseY / squareHeight, mouseX / squareWidth);
+                //repaintSurrounding(g);
+                //repaintSurrounding(g, mouseY / squareHeight, mouseX / squareWidth);
+                drawBoard(g);
                 dragState = 0;
                 break;
             default:

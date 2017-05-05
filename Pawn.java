@@ -23,6 +23,10 @@ public class Pawn implements Piece
         return 1;
     }
     
+    public int getNum(){
+        return color? 0 : 6;
+    }
+    
     public String getIcon(){
         return "\u265F";
     }

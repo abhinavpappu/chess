@@ -1,4 +1,4 @@
-
+import java.util.ArrayList;
 /**
  * Write a description of class Move here.
  * 
@@ -7,8 +7,8 @@
  */
 public class Move
 {
+    private static final String[] letters = {"a", "b", "c", "d", "e", "f", "g", "h"};
     private int toRow, toCol, fromRow, fromCol;
-    private final String[] letters = {"a", "b", "c", "d", "e", "f", "g", "h"};
     
     /**
      * Constructor for objects of class Move
@@ -56,8 +56,37 @@ public class Move
         return piece2.getValue();
     }
     
-    //public static Move fromString(String str, Board board){
-    //}
+    public static Move fromString(String str, boolean color, Board board){
+        //check for castling first
+        //also check for pawn promotions which have "=" + letter of piece being promoted to
+        
+        String toSquare = str.substring(str.length() - 2);
+        int toCol = indexOf(toSquare.substring(0, 1));
+        int toRow = 8 - Integer.parseInt(toSquare.substring(1, 2));
+        ArrayList<Move> moves = board.getAllMoves(color);
+        for(int i = moves.size() - 1; i >= 0; i--){
+            if(moves.get(i).getCol() != toCol || moves.get(i).getRow() != toRow){
+                moves.remove(i);
+            }
+        }
+        if(moves.size() == 1){
+            return moves.get(0);
+        }
+        
+        
+        
+        return null;
+    }
+    
+    private static int indexOf(String letter)
+    {
+        for(int i = 0; i < letters.length; i++){
+            if(letters[i].equals(letter)){
+                return i;
+            }
+        }
+        return -1;
+    }
     
     @Override
     public boolean equals(Object obj){

@@ -24,6 +24,10 @@ public class Rook implements Piece
         return 5;
     }
     
+    public int getNum(){
+        return color? 3 : 9;
+    }
+    
     public String getIcon(){
         return "\u265C";
     }

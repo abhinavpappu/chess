@@ -24,6 +24,10 @@ public class Bishop implements Piece
         return 3;
     }
     
+    public int getNum(){
+        return color? 2 : 8;
+    }
+    
     public String getIcon(){
         return "\u265D";
     }

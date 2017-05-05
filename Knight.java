@@ -24,6 +24,10 @@ public class Knight implements Piece
         return 3;
     }
     
+    public int getNum(){
+        return color? 1 : 7;
+    }
+    
     public String getIcon(){
         return "\u265E";
     }

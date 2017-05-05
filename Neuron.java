@@ -21,7 +21,7 @@ public class Neuron
     {
         weights = new double[numWeights];
         for(int i = 0; i < weights.length; i++){
-            weights[i] = Math.random();
+            weights[i] = Math.random() * 2 - 1;
         }
         bias = Math.random();
         this.activation = activation;

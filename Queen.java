@@ -24,6 +24,10 @@ public class Queen implements Piece
         return 9;
     }
     
+    public int getNum(){
+        return color? 4 : 10;
+    }
+    
     public String getIcon(){
         return "\u265B";
     }

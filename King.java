@@ -24,6 +24,10 @@ public class King implements Piece
         return 10;
     }
     
+    public int getNum(){
+        return color? 5 : 11;
+    }
+    
     public String getIcon(){
         return "\u265A";
     }
