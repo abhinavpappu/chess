@@ -64,6 +64,12 @@ public class King implements Piece
                 }
             }
         }
+        if(SpecialMove.checkCastleValidity(board.getPieces(), board.getPlayerColor(), color, true)){
+            moves.add(new SpecialMove(color, true, board.getPlayerColor()));
+        }
+        if(SpecialMove.checkCastleValidity(board.getPieces(), board.getPlayerColor(), color, false)){
+            moves.add(new SpecialMove(color, false, board.getPlayerColor()));
+        }
         return moves;
     }
     

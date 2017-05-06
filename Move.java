@@ -11,7 +11,17 @@ public class Move
     private int toRow, toCol, fromRow, fromCol;
     
     /**
-     * Constructor for objects of class Move
+     * Default constructor for Move
+     */
+    public Move(){
+    }
+    
+    /**
+     * Constructor for Move from square to square
+     * @param row1 destination square's row
+     * @param col1 destination square's column
+     * @param row2 originating square's row
+     * @param col2 originating square's column
      */
     public Move(int row1, int col1, int row2, int col2)
     {
@@ -41,7 +51,13 @@ public class Move
      * @param board board to execute move on
      */
     public int execute(Piece[][] pieces){
+        if(toRow == toCol || fromRow == fromCol){
+            return -1;
+        }
         Piece piece = pieces[fromRow][fromCol];
+        if(piece == null){
+            return -1;
+        }
         Piece piece2 = pieces[toRow][toCol];
         if(piece2 == null){
             pieces[fromRow][fromCol] = null;
