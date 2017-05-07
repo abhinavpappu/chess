@@ -1,5 +1,6 @@
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.PrintWriter;
 /**
  * Write a description of class DatabaseToPoints here.
  * 
@@ -9,7 +10,8 @@ import java.io.BufferedReader;
 public class DatabaseToPoints
 {
     public static void main(String[] args) throws Exception{
-        String filePath = "Dataset/FirstTen.txt";
+        long time = System.currentTimeMillis();
+        String filePath = "Dataset/First150KB.txt";
         String data = readFile(filePath);
         String[] games = data.split("\\n*\\[Event \"(.|\\n)*?\\n\\n\\n*");
         //games[0] is ""
@@ -35,23 +37,39 @@ public class DatabaseToPoints
         }
         
         Board board = new Board(true);
-        
-        double[][][] inputs = new double[splitMoves.length][0][0];
+        PrintWriter pw1 = new PrintWriter("TrainingPoints/White/First150KB.txt");
+        PrintWriter pw2 = new PrintWriter("TrainingPoints/Black/First150KB.txt");
+        int numErrors = 0;
+        //double[][][] inputs = new double[splitMoves.length][0][0];
         boolean[] colors = {true, false};
         for(int i = 0; i < splitMoves.length; i++){
-            inputs[i] = new double[splitMoves[i].length * 2][64 * 12];
             for(int j = 0; j < splitMoves[i].length; j++){
                 for(int k = 0; k < splitMoves[i][j].length; k++){
-                    Move.fromString(splitMoves[i][j][k], colors[k], board).execute(board.getPieces());
-                    inputs[i][j * 2 + k] = toInput(board.getPieces());
+                    try{
+                        Move.fromString(splitMoves[i][j][k], colors[k], board).execute(board);
+                        if(k == 0){
+                            pw1.println(arrToString(toInput(board.getPieces())));
+                            pw1.println(winners[i]);
+                        }
+                        else{
+                            pw2.println(arrToString(toInput(board.getPieces())));
+                            pw2.println(-1 * winners[i]);
+                        }
+                    }
+                    catch(Exception e){
+                        numErrors++;
+                        j += splitMoves[i].length;
+                        break;
+                    }
                 }
             }
+            pw1.flush();
+            pw2.flush();
             board.reset();
         }
-        
-        
-        
-        System.out.println("Done");
+        pw1.close();
+        pw2.close();
+        System.out.println("Done with " + splitMoves.length + " games in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds with " + numErrors + " errors");
     }
     
     private static String readFile(String filePath) throws Exception{

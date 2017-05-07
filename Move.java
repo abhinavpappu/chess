@@ -44,8 +44,9 @@ public class Move
     /**
      * @param board board to execute move on
      */
-    public int execute(Piece[][] pieces){
-        if(toRow == toCol && fromRow == fromCol){
+    public int execute(Board board){
+        Piece[][] pieces = board.getPieces();
+        if(fromRow == toRow && fromCol == toCol){
             return -1;
         }
         Piece piece = pieces[fromRow][fromCol];
@@ -56,6 +57,7 @@ public class Move
         if(piece2 == null){
             pieces[fromRow][fromCol] = null;
             pieces[toRow][toCol] = piece.move(toRow, toCol);
+            board.updateInDangers();
             return 0;
         }
         else if(piece2.getColor() == piece.getColor()){
@@ -63,35 +65,79 @@ public class Move
         }
         pieces[fromRow][fromCol] = null;
         pieces[toRow][toCol] = piece.move(toRow, toCol);
+        board.updateInDangers();
         return piece2.getValue();
     }
     
     public static Move fromString(String str, boolean color, Board board){
-        //check for castling first
-        //also check for pawn promotions which have "=" + letter of piece being promoted to
+        if(str.substring(str.length() - 1, str.length()).equals("+") || str.substring(str.length() - 1, str.length()).equals("#")){
+            str = str.substring(0, str.length() - 1);
+        }
+        str = str.replaceAll("([a-h]?)x", "$1");
+        if(str.equals("O-O")){
+            return new SpecialMove(color, true, board.getPlayerColor());
+        }
+        if(str.equals("O-O-O")){
+            return new SpecialMove(color, false, board.getPlayerColor());
+        }
+        
+        String[] pieceNums = {"P", "N", "B", "R", "Q", "K"};
+        
+        //check for pawn promotions which have "=" + letter of piece being promoted to
+        int pawnPromotion = -1;
+        if(str.indexOf("=") == str.length() - 2){
+            pawnPromotion = indexOf(str.substring(str.length() - 1), pieceNums);
+            str = str.substring(0, str.length() - 2);
+        }
         
         String toSquare = str.substring(str.length() - 2);
-        int toCol = indexOf(toSquare.substring(0, 1));
+        int toCol = indexOf(toSquare.substring(0, 1), letters);
         int toRow = 8 - Integer.parseInt(toSquare.substring(1, 2));
+        int fromRow = -1;
+        int fromCol = -1;
+        int pieceNum = color? 0 : 6;
+        if(str.length() > 2){
+            pieceNum = indexOf(str.substring(0, 1), pieceNums);
+            if(pieceNum >= 0){
+                str = str.substring(1);
+                pieceNum += color? 0 : 6;
+            }
+            else{
+                pieceNum = color? 0 : 6;
+            }
+            if(str.length() > 2){
+                if(str.substring(0, 1).matches("[a-h]")){
+                    fromCol = indexOf(str.substring(0, 1), letters);
+                }
+                else{
+                    fromRow = 8 - Integer.parseInt(str.substring(0, 1));
+                }
+            }
+        }
         ArrayList<Move> moves = board.getAllMoves(color);
         for(int i = moves.size() - 1; i >= 0; i--){
-            if(moves.get(i).getCol() != toCol || moves.get(i).getRow() != toRow){
+            Move move = moves.get(i);
+            if(move.getCol() != toCol || move.getRow() != toRow || board.getPiece(move.getFromRow(), move.getFromCol()).getNum() != pieceNum){
+                moves.remove(i);
+            }
+            else if((fromRow > -1 && move.getFromRow() != fromRow) || (fromCol > -1 && move.getFromCol() != fromCol)){
                 moves.remove(i);
             }
         }
         if(moves.size() == 1){
+            if(pawnPromotion > -1){
+                SpecialMove move = (SpecialMove)moves.get(0);
+                move.setPromotingPiece(pawnPromotion);
+                return move;
+            }
             return moves.get(0);
         }
-        
-        
-        
         return null;
     }
     
-    private static int indexOf(String letter)
-    {
-        for(int i = 0; i < letters.length; i++){
-            if(letters[i].equals(letter)){
+    private static int indexOf(String str, String[] arr){
+        for(int i = 0; i < arr.length; i++){
+            if(arr[i].equals(str)){
                 return i;
             }
         }

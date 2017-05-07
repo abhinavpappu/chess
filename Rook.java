@@ -6,7 +6,7 @@ import java.util.ArrayList;
  */
 public class Rook implements Piece
 {
-    private boolean color;
+    private boolean color, isInDanger, touched;
     private int row, col;
     
     /**
@@ -18,6 +18,7 @@ public class Rook implements Piece
     {
         this.color = color;
         move(row, col);
+        touched = false;
     }
     
     public int getValue(){
@@ -42,6 +43,18 @@ public class Rook implements Piece
     
     public int getColumn() {
         return col;
+    }
+    
+    public boolean isInDanger(){
+        return isInDanger;
+    }
+    
+    public void setInDanger(boolean inDanger){
+        isInDanger = inDanger;
+    }
+    
+    public boolean touched(){
+        return touched;
     }
     
     public ArrayList<Move> getMoves(Board board){
@@ -73,6 +86,7 @@ public class Rook implements Piece
     }
     
     public Piece move(int row, int col){
+        touched = true;
         this.row = row;
         this.col = col;
         return this;
@@ -80,5 +94,9 @@ public class Rook implements Piece
     
     public String toString(){
         return ((color)? "White" : "Black") + " Rook";
+    }
+    
+    public Piece clone(){
+        return new Rook(color, row, col);
     }
 }

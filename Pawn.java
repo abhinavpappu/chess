@@ -6,7 +6,7 @@ import java.util.ArrayList;
  */
 public class Pawn implements Piece
 {
-    private boolean color;
+    private boolean color, isInDanger;
     private int row, col;
     
     /**
@@ -43,7 +43,16 @@ public class Pawn implements Piece
         return col;
     }
     
+    public boolean isInDanger(){
+        return isInDanger;
+    }
+    
+    public void setInDanger(boolean inDanger){
+        isInDanger = inDanger;
+    }
+    
     public ArrayList<Move> getMoves(Board board) {
+        //need to add en passant
         ArrayList<Move> moves = new ArrayList<Move>();
         int dir = (color == board.getPlayerColor())? -1 : 1;
         if(row + dir <= 7 && row + dir >= 0 && board.getPiece(row + dir, col) == null) {
@@ -58,6 +67,12 @@ public class Pawn implements Piece
         if(row + dir <= 7 && row + dir >= 0 && col - 1 >= 0 && board.getPiece(row + dir, col - 1) != null && board.getPiece(row + dir, col - 1).getColor() != color) {
             moves.add(new Move(row + dir, col - 1, row, col));
         }
+        for(int i = 0; i < moves.size(); i++){
+            //pawn promotion
+            if(moves.get(i).getRow() == 3.5 + dir * 3.5){
+                moves.set(i, new SpecialMove(moves.get(i)));
+            }
+        }
         return moves;
     }
     
@@ -69,5 +84,9 @@ public class Pawn implements Piece
     
     public String toString(){
         return ((color)? "White" : "Black") + " Pawn";
+    }
+    
+    public Piece clone(){
+        return new Pawn(color, row, col);
     }
 }

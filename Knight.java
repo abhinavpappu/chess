@@ -6,7 +6,7 @@ import java.util.ArrayList;
  */
 public class Knight implements Piece
 {
-    private boolean color;
+    private boolean color, isInDanger;
     private int row, col;
     
     /**
@@ -44,6 +44,14 @@ public class Knight implements Piece
         return col;
     }
     
+    public boolean isInDanger(){
+        return isInDanger;
+    }
+    
+    public void setInDanger(boolean inDanger){
+        isInDanger = inDanger;
+    }
+    
     public ArrayList<Move> getMoves(Board board){
         ArrayList<Move> moves = new ArrayList<Move>();
         for(int i = -1; i <= 1 ; i+=2){ // sign for one direction ( + or - )
@@ -67,5 +75,9 @@ public class Knight implements Piece
     
     public String toString(){
         return ((color)? "White" : "Black") + " Knight";
+    }
+    
+    public Piece clone(){
+        return new Knight(color, row, col);
     }
 }

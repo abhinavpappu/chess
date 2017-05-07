@@ -31,6 +31,18 @@ public class Board
         this.playerColor = playerColor;
         setUp();
     }
+    
+    public Board(Board board){
+        pieces = new Piece[8][8];
+        for(int i = 0; i < pieces.length; i++){
+            for(int j = 0; j < pieces[i].length; j++){
+                pieces[i][j] = (board.getPiece(i, j) == null)? null : board.getPiece(i, j).clone();
+            }
+        }
+        playerColor = board.getPlayerColor();
+        playerScore = board.getPlayerScore();
+        computerScore = board.getComputerScore();
+    }
 
     private void setUp(){
         for(int i = 0; i < 8; i++){
@@ -89,6 +101,14 @@ public class Board
     public boolean getPlayerColor(){
         return playerColor;
     }
+    
+    public int getPlayerScore(){
+        return playerScore;
+    }
+    
+    public int getComputerScore(){
+        return computerScore;
+    }
 
     /**
      * Gets a piece at a specific location on the board
@@ -113,7 +133,7 @@ public class Board
         Move requestedMove = new Move(row, col, piece.getRow(), piece.getColumn());
         if(piece.getMoves(this).contains(requestedMove)){
             pieces[piece.getRow()][piece.getColumn()] = piece;
-            int result = requestedMove.execute(pieces);
+            int result = requestedMove.execute(this);
             if(result >= 0){
                 if(piece.getColor() == getPlayerColor()){
                     playerScore += result;
@@ -127,8 +147,38 @@ public class Board
         }
         return false;
     }
+    
+    public void updateInDangers(){
+        for(Piece[] row : pieces){
+            for(Piece piece : row){
+                if(piece != null){
+                    piece.setInDanger(false);
+                }
+            }
+        }
+        ArrayList<Move> moves = getAllMoves(true, false);
+        moves.addAll(getAllMoves(false, false));
+        for(Move move : moves){
+            if(pieces[move.getRow()][move.getCol()] != null){
+                if(pieces[move.getRow()][move.getCol()].getColor() != pieces[move.getFromRow()][move.getFromCol()].getColor()){
+                    pieces[move.getRow()][move.getCol()].setInDanger(true);
+                }
+            }
+        }
+    }
+    
+    public boolean isCheck(boolean color){
+        for(Piece[] row : pieces){
+            for(Piece piece : row){
+                if(piece != null && piece.getNum() == (color? 5 : 11)){
+                    return piece.isInDanger();
+                }
+            }
+        }
+        return false;
+    }
 
-    public ArrayList<Move> getAllMoves(boolean color){
+    public ArrayList<Move> getAllMoves(boolean color, boolean removeCheck){
         ArrayList<Move> moves = new ArrayList<Move>();
         for(Piece[] row : pieces){
             for(Piece piece : row){
@@ -137,17 +187,42 @@ public class Board
                 }
             }
         }
+        if(removeCheck){
+            for(int i = moves.size() - 1; i >= 0; i--){
+                if(wouldBeCheck(moves.get(i), color)){
+                    moves.remove(i);
+                }
+            }
+        }
         return moves;
+    }
+    
+    public ArrayList<Move> getAllMoves(boolean color){
+        return getAllMoves(color, true);
+    }
+    
+    public boolean wouldBeCheck(Move move, boolean color){
+        Board board = new Board(this);
+        move.execute(board);
+        return board.isCheck(color);
     }
 
     public String toString(){
+        String[] pieceLetters = {"WPAWN", "WKNIG", "WBISH", "WROOK", "WQUEE", "WKING", "BPAWN", "BKNIG", "BBISH", "BROOK", "BQUEE", "BKING"};
+        String[] letters = {"a", "b", "c", "d", "e", "f", "g", "h"};
         String str = "";
-        for(Piece[] row : pieces){
-            for(Piece piece : row){
-                str += piece + ", ";
+        for(int i = 0; i < pieces.length; i++){
+            str += 8 - i + "  ";
+            for(Piece piece : pieces[i]){
+                str += ((piece != null)? pieceLetters[piece.getNum()] : "_____")  + "  ";
             }
             str += "\n";
         }
+        str += " ";
+        for(int i = 0; i < letters.length; i++){
+            str += "    " + letters[i] + "  ";
+        }
+        str += "\n";
         return str;
     }
 }

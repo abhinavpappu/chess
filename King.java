@@ -6,7 +6,7 @@ import java.util.ArrayList;
  */
 public class King implements Piece
 {
-    private boolean color;
+    private boolean color, isInDanger, touched;
     private int row, col;
     
     /**
@@ -18,6 +18,7 @@ public class King implements Piece
     {
         this.color = color;
         move(row, col);
+        touched = false;
     }
     
     public int getValue(){
@@ -44,6 +45,18 @@ public class King implements Piece
         return col;
     }
     
+    public boolean isInDanger(){
+        return isInDanger;
+    }
+    
+    public void setInDanger(boolean inDanger){
+        isInDanger = inDanger;
+    }
+    
+    public boolean touched(){
+        return touched;
+    }
+    
     public ArrayList<Move> getMoves(Board board){
         ArrayList<Move> moves = new ArrayList<Move>();
         for(int j = -1; j <= 1; j++){
@@ -64,16 +77,17 @@ public class King implements Piece
                 }
             }
         }
-        if(SpecialMove.checkCastleValidity(board.getPieces(), board.getPlayerColor(), color, true)){
+        if(SpecialMove.checkCastleValidity(board, board.getPlayerColor(), color, true)){
             moves.add(new SpecialMove(color, true, board.getPlayerColor()));
         }
-        if(SpecialMove.checkCastleValidity(board.getPieces(), board.getPlayerColor(), color, false)){
+        if(SpecialMove.checkCastleValidity(board, board.getPlayerColor(), color, false)){
             moves.add(new SpecialMove(color, false, board.getPlayerColor()));
         }
         return moves;
     }
     
     public Piece move(int row, int col){
+        touched = true;
         this.row = row;
         this.col = col;
         return this;
@@ -81,5 +95,9 @@ public class King implements Piece
     
     public String toString(){
         return ((color)? "White" : "Black") + " King";
+    }
+    
+    public Piece clone(){
+        return new King(color, row, col);
     }
 }

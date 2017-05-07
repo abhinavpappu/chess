@@ -36,21 +36,10 @@ public class SpecialMove extends Move
         piece = 5;
     }
     
-    /**
-     * Constuctor for SpecialMove (pawn promotion with known piece being promoted to)
-     * @param row1 destination square's row
-     * @param col1 destination square's column
-     * @param row2 originating square's row
-     * @param col2 originating square's column
-     * @param pieceNum piece to promote to in order of value (0 - pawn, 1 - knight, ..., 4 - queen)
-     */
-    public SpecialMove(int row1, int col1, int row2, int col2, int pieceNum){
-        super(row1, col1, row2, col2);
+    public SpecialMove(Move move){
+        super(move.getRow(), move.getCol(), move.getFromRow(), move.getFromCol());
         type = false;
-        if(piece < 0 || piece > 4){
-            pieceNum = 5;
-        }
-        piece = pieceNum;
+        piece = 5;
     }
     
     private static int getKingRow(boolean color, boolean playerColor){
@@ -79,6 +68,17 @@ public class SpecialMove extends Move
         return getKingCol(playerColor) + disp;
     }
     
+    private static int getRookCol(boolean playerColor, boolean side){
+        int rookCol;
+        if(playerColor){
+            rookCol = (side)? 7 : 0;
+        }
+        else{
+            rookCol = (side)? 0 : 7;
+        }
+        return rookCol;
+    }
+    
     /**
      * Sets piece being promoted to for pawn promotion
      * 
@@ -93,48 +93,83 @@ public class SpecialMove extends Move
         return true;
     }
     
-    public int execute(Piece[][] pieces){
+    public int execute(Board board){
+        Piece[][] pieces = board.getPieces();
         if(type){
-            if(!checkCastleValidity(pieces, pColor, color, side)){
+            if(!checkCastleValidity(board, pColor, color, side)){
                 return -1;
             }
-            
-            int rookDisp, rookCol;
+            int rookDisp;
             if(pColor){
                 rookDisp = (side)? -1 : 1;
-                rookCol = (side)? 7 : 0;
             }
             else{
                 rookDisp = (side)? 1 : -1;
-                rookCol = (side)? 0 : 7;
             }
             int kingRow = super.getFromRow();
             int kingCol = super.getFromCol();
             int kingToCol = super.getCol();
+            int rookCol = getRookCol(pColor, side);
             pieces[kingRow][kingToCol] = pieces[kingRow][kingCol].move(kingRow, kingToCol);
             pieces[kingRow][kingCol] = null;
             pieces[kingRow][kingToCol + rookDisp] = pieces[kingRow][rookCol].move(kingRow, kingToCol + rookDisp);
             pieces[kingRow][rookCol] = null;
+            board.updateInDangers();
             return 0;
         }
         else{
             if(pieces[super.getFromRow()][super.getFromCol()].getNum() != 0){
                 return -1;
             }
-            if(super.execute(pieces) > -1){
+            if(super.execute(board) > -1){
                 Piece pawn = pieces[super.getRow()][super.getCol()];
                 pieces[super.getRow()][super.getCol()] = getPiece(pawn.getColor(), pawn.getRow(), pawn.getColumn());
+                board.updateInDangers();
+                return 0;
             }
             else{
                 return -1;
             }
         }
-        return 0;
     }
     
-    public static boolean checkCastleValidity(Piece[][] pieces, boolean playerColor, boolean color, boolean side){
-        //check if king and rook unmoved, spaces between unoccupied, king not in check,
-        //and king does not cross over or end on square in which it would be in check
+    public static boolean checkCastleValidity(Board board, boolean playerColor, boolean color, boolean side){
+        Piece[][] pieces = board.getPieces();
+        int kingRow = getKingRow(color, playerColor);
+        int kingCol = getKingCol(playerColor);
+        int rookCol = getRookCol(playerColor, side);
+        if(pieces[kingRow][kingCol] == null || pieces[kingRow][kingCol].getNum() != (color? 5 : 11)){
+            return false;
+        }
+        if(pieces[kingRow][rookCol] == null || pieces[kingRow][rookCol].getNum() != (color? 3 : 9)){
+            return false;
+        }
+        if(((King)pieces[kingRow][kingCol]).touched() || ((Rook)pieces[kingRow][rookCol]).touched()){
+            return false;
+        }
+        if(board.isCheck(color)){
+            return false;
+        }
+        if(kingCol < rookCol){
+            for(int i = kingCol + 1; i < rookCol; i++){
+                if(pieces[kingRow][i] != null){
+                    return false;
+                }
+                if(Math.abs(i - kingCol) <= 2 && board.wouldBeCheck(new Move(kingRow, i, kingRow, kingCol), color)){
+                    return false;
+                }
+            }
+        }
+        else{
+            for(int i = kingCol - 1; i > rookCol; i--){
+                if(pieces[kingRow][i] != null){
+                    return false;
+                }
+                if(Math.abs(i - kingCol) <= 2 && board.wouldBeCheck(new Move(kingRow, i, kingRow, kingCol), color)){
+                    return false;
+                }
+            }
+        }
         return true;
     }
     
@@ -153,5 +188,12 @@ public class SpecialMove extends Move
             default:
                 return new Queen(color, row, col);
         }
+    }
+    
+    public String toString(){
+        if(type){
+            return ((color)? "White" : "Black") + ((side)? " Kingside" : " Queenside") + " Castle";
+        }
+        return "";
     }
 }

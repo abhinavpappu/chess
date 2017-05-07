@@ -6,7 +6,7 @@ import java.util.ArrayList;
  */
 public class Queen implements Piece
 {
-    private boolean color;
+    private boolean color, isInDanger;
     private int row, col;
     
     /**
@@ -42,6 +42,14 @@ public class Queen implements Piece
     
     public int getColumn() {
         return col;
+    }
+    
+    public boolean isInDanger(){
+        return isInDanger;
+    }
+    
+    public void setInDanger(boolean inDanger){
+        isInDanger = inDanger;
     }
     
     public ArrayList<Move> getMoves(Board board){
@@ -84,5 +92,9 @@ public class Queen implements Piece
     
     public String toString(){
         return ((color)? "White" : "Black") + " Queen";
+    }
+    
+    public Piece clone(){
+        return new Queen(color, row, col);
     }
 }
