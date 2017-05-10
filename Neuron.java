@@ -50,4 +50,24 @@ public class Neuron
         previousOutput = output;
         return output;
     }
+    
+    public double getOutput(){
+        return previousOutput;
+    }
+    
+    public double getOutputDeriv(){
+        return activation.derivative(previousOutput);
+    }
+    
+    public double getWeight(int i){
+        return weights[i];
+    }
+    
+    public void updateBias(double change){
+        bias += change;
+    }
+    
+    public void updateWeight(int i, double change){
+        weights[i] += change;
+    }
 }

@@ -8,9 +8,24 @@
 public class ANN_Tester
 {
     public static void main(String[] args){
-        ANN ann = new ANN(new int[]{1, 2});
-        String str = arrToString(ann.predict(new double[]{1}));
-        System.out.println(str);
+        double[][] inputs = new double[150][1];
+        double[][] outputs = new double[150][1];
+        for(int i = 0; i < inputs.length; i++){
+            inputs[i][0] = i * (2 * Math.PI / inputs.length);
+            outputs[i][0] = Math.sin(inputs[i][0]);
+        }
+        System.out.println("Training Data:");
+        System.out.println(arrToString(inputs));
+        System.out.println(arrToString(outputs));
+        double[] test = {Math.PI / 3}; //output should be approximately .866
+        int[] structure = {1, 100, 50, 25, 1};
+        ANN network = new ANN(structure);
+        System.out.println("sin(π/3) = " + Math.sin(test[0]));
+        System.out.println("Before Training: sin(π/3) ≈ " + arrToString(network.predict(test)));
+        long time = System.currentTimeMillis();
+        network.train(inputs, outputs, 10000, .001);
+        System.out.println("Training complete in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds");
+        System.out.println("After Training: sin(π/3) ≈ " + arrToString(network.predict(test)));
     }
     
     public static void testMove(){
@@ -40,6 +55,15 @@ public class ANN_Tester
         String str = "[";
         for(double val : arr){
             str += val + ", ";
+        }
+        str = str.substring(0, str.length() - 2) + "]";
+        return str;
+    }
+    
+    private static String arrToString(double[][] arr){
+        String str = "[";
+        for(double[] val : arr){
+            str += val[0] + ", ";
         }
         str = str.substring(0, str.length() - 2) + "]";
         return str;

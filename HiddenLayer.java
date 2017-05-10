@@ -46,4 +46,28 @@ public class HiddenLayer implements Layer
         }
         return output;
     }
+    
+    public int getNumNeurons(){
+        return neurons.length;
+    }
+    
+    public double getOutput(int i){
+        return neurons[i].getOutput();
+    }
+    
+    public double getWeight(int i, int j){
+        return neurons[i].getWeight(j);
+    }
+    
+    public double getOutputDeriv(int i){
+        return neurons[i].getOutputDeriv();
+    }
+    
+    public void updateBias(int i, double change){
+        neurons[i].updateBias(change);
+    }
+    
+    public void updateWeight(int i, int j, double change){
+        neurons[i].updateWeight(j, change);
+    }
 }
