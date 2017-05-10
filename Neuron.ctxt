@@ -1,0 +1,24 @@
+#BlueJ class context
+comment0.params=numNeuron\ row\ col\ net
+comment0.target=Neuron(int,\ int,\ int,\ Network)
+comment0.text=\r\n\ creates\ a\ bare\ neuron\ with\ random\ weights\r\n
+comment1.params=inputs
+comment1.target=double\ feed(double[])
+comment1.text=\r\n\ Returns\ the\ value\ of\ sigmoid\ based\ on\ input\ and\ weight\r\n
+comment2.params=inputs\ desired
+comment2.target=void\ train(double[],\ double[])
+comment2.text=\r\n\ Adjusts\ weights\ based\ on\ errors\r\n
+comment3.params=
+comment3.target=void\ updateWeights()
+comment4.params=n
+comment4.target=double\ sigmoid(double)
+comment4.text=\r\n\ Logistic\ activation\ function\r\n
+comment5.params=
+comment5.target=double[]\ getWeights()
+comment6.params=
+comment6.target=double\ getLastOutput()
+comment7.params=
+comment7.target=double\ getPart()
+comment8.params=in
+comment8.target=double[]\ remakeAs(double[])
+numComments=9

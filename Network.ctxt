@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.params=size\ inputs
+comment0.target=Network(int[],\ int)
+comment0.text=\r\n\ constructs\ the\ network\ of\ neurons\ as\ a\ nested\ arraylist\r\n
+comment1.params=inputs
+comment1.target=double[]\ feed(double[])
+comment1.text=\r\n\ feeds\ forward\ every\ neuron,\ and\ determines\ the\ logistic\ based\ on\ weight\r\n
+comment2.params=inputs\ desired
+comment2.target=void\ train(double[],\ double[])
+comment3.params=
+comment3.target=java.util.ArrayList\ getNeurons()
+numComments=4

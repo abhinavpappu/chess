@@ -1,5 +1,7 @@
 import java.io.FileReader;
 import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 /**
  * Write a description of class DatabaseToPoints here.
  * 
@@ -8,10 +10,11 @@ import java.io.BufferedReader;
  */
 public class DatabaseToPoints
 {
-    private static double[][] inputs = {};
-    private static double[][] outputs = {};
-    
-    public static void generate(boolean color){
+    private static ArrayList<double[]> inputs;
+    private static ArrayList<double[]> outputs;
+    public static void setup() throws Exception{
+        inputs = new ArrayList<double[]>();
+        outputs = new ArrayList<double[]>();
         long time = System.currentTimeMillis();
         String filePath = "Dataset/First150KB.txt";
         String data = readFile(filePath);
@@ -26,66 +29,66 @@ public class DatabaseToPoints
         
         int[] winners = new int[moves.length];
         for(int i = 0; i < winners.length; i++){
-            winners[i] = (color? 1 : -1) * getWinner(moves[i][moves[i].length - 1]);
+            winners[i] = getWinner(moves[i][moves[i].length - 1]);
             moves[i][moves[i].length - 1] = moves[i][moves[i].length - 1].replaceAll(" [012/]{1,3}-[012/]{1,3}", "");
         }
         
-        int numMoves = 0;
         String[][][] splitMoves = new String[moves.length][0][0];
         for(int i = 0; i < moves.length; i++){
             splitMoves[i] = new String[moves[i].length - 1][2];
             for(int j = 1; j < moves[i].length; j++){
                 splitMoves[i][j - 1] = moves[i][j].split(" ");
-                numMoves++;
             }
         }
         
         Board board = new Board(true);
-        int numErrors = 0, moveInd = 0;
-        inputs = new double[numMoves][0];
-        outputs = new double[numMoves][0];
+        PrintWriter pw1 = new PrintWriter("TrainingPoints/White/First150KB.txt");
+        PrintWriter pw2 = new PrintWriter("TrainingPoints/Black/First150KB.txt");
+        int numErrors = 0;
+        //double[][][] inputs = new double[splitMoves.length][0][0];
+        boolean[] colors = {true, false};
         for(int i = 0; i < splitMoves.length; i++){
             for(int j = 0; j < splitMoves[i].length; j++){
-                try{
-                    Move.fromString(splitMoves[i][j][0], true, board).execute(board);
-                    if(color){
-                        inputs[moveInd] = toInput(board.getPieces());
-                        outputs[moveInd] = new double[]{winners[i]};
-                    }
-                    if(splitMoves[i][j].length > 1){
-                        Move.fromString(splitMoves[i][j][1], false, board).execute(board);
-                        if(!color){
-                            inputs[moveInd] = toInput(board.getPieces());
-                            outputs[moveInd] = new double[]{winners[i]};
+                for(int k = 0; k < splitMoves[i][j].length; k++){
+                    try{
+                        Move.fromString(splitMoves[i][j][k], colors[k], board).execute(board);
+                        if(k == 0){
+                            pw1.println(arrToString(toInput(board.getPieces())));
+                            inputs.add(toInput(board.getPieces()));
+                            outputs.add(new double[]{winners[i]});
+                        }
+                        else{
+                            pw2.println(arrToString(toInput(board.getPieces())));
+                            outputs.add(new double[]{-1*winners[i]});
+                            pw2.println(-1 * winners[i]);
                         }
                     }
-                    moveInd++;
-                }
-                catch(Exception e){
-                    numErrors++;
-                    break;
+                    catch(Exception e){
+                        numErrors++;
+                        j += splitMoves[i].length;
+                        break;
+                    }
                 }
             }
+            pw1.flush();
+            pw2.flush();
             board.reset();
         }
-        System.out.println("Done generating points for " + numMoves + " moves in " + splitMoves.length + " games in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds with " + numErrors + " errors");
+        pw1.close();
+        pw2.close();
+        System.out.println("Done with " + splitMoves.length + " games in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds with " + numErrors + " errors");
     }
     
-    private static String readFile(String filePath){
-        try{
-            FileReader fileReader = new FileReader(filePath);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String text = "";
-            String line = "";
-            while((line = bufferedReader.readLine()) != null){
-                text += line + "\n";
-            }
-            bufferedReader.close();
-            return text;
+    private static String readFile(String filePath) throws Exception{
+        FileReader fileReader = new FileReader(filePath);
+        BufferedReader bufferedReader = new BufferedReader(fileReader);
+        String text = "";
+        String line = "";
+        while((line = bufferedReader.readLine()) != null){
+            text += line + "\n";
         }
-        catch(Exception e){
-            throw new RuntimeException("Error reading file");
-        }
+        bufferedReader.close();
+        return text;
     }
     
     //-1 - black, 0 - tie, 1 - white
@@ -116,7 +119,24 @@ public class DatabaseToPoints
         str = str.substring(0, str.length() - 1) + "]";
         return str;
     }
-    
+    public static double[][] getInputs()
+    {
+        double[][] foo = new double[inputs.size()][1];
+        for(int i = 0;i<inputs.size();i++)
+        {
+            foo[i] = inputs.get(i);
+        }
+        return foo;
+    }
+    public static double[][] getOutputs()
+    {
+        double[][] foo = new double[outputs.size()][1];
+        for(int i = 0;i<outputs.size();i++)
+        {
+            foo[i] = outputs.get(i);
+        }
+        return foo;
+    }
     private static double[] toInput(Piece[][] pieces){
         double[] arr = new double[64 * 12];
         for(int i = 0; i < pieces.length; i++){
@@ -128,13 +148,5 @@ public class DatabaseToPoints
             }
         }
         return arr;
-    }
-    
-    public static double[][] getInputs(){
-        return inputs;
-    }
-    
-    public static double[][] getOutputs(){
-        return outputs;
     }
 }

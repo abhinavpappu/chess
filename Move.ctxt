@@ -1,0 +1,24 @@
+#BlueJ class context
+comment0.params=row1\ col1\ row2\ col2
+comment0.target=Move(int,\ int,\ int,\ int)
+comment0.text=\r\n\ Constructor\ for\ Move\ from\ square\ to\ square\r\n\ @param\ row1\ destination\ square's\ row\r\n\ @param\ col1\ destination\ square's\ column\r\n\ @param\ row2\ originating\ square's\ row\r\n\ @param\ col2\ originating\ square's\ column\r\n
+comment1.params=
+comment1.target=int\ getRow()
+comment2.params=
+comment2.target=int\ getCol()
+comment3.params=
+comment3.target=int\ getFromRow()
+comment4.params=
+comment4.target=int\ getFromCol()
+comment5.params=board
+comment5.target=int\ execute(Board)
+comment5.text=\r\n\ @param\ board\ board\ to\ execute\ move\ on\r\n
+comment6.params=str\ color\ board
+comment6.target=Move\ fromString(java.lang.String,\ boolean,\ Board)
+comment7.params=str\ arr
+comment7.target=int\ indexOf(java.lang.String,\ java.lang.String[])
+comment8.params=obj
+comment8.target=boolean\ equals(java.lang.Object)
+comment9.params=
+comment9.target=java.lang.String\ toString()
+numComments=10
