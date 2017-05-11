@@ -33,13 +33,13 @@ public class SpecialMove extends Move
     public SpecialMove(int row1, int col1, int row2, int col2){
         super(row1, col1, row2, col2);
         type = false;
-        piece = 5;
+        piece = 4;
     }
     
     public SpecialMove(Move move){
         super(move.getRow(), move.getCol(), move.getFromRow(), move.getFromCol());
         type = false;
-        piece = 5;
+        piece = 4;
     }
     
     private static int getKingRow(boolean color, boolean playerColor){
@@ -118,7 +118,7 @@ public class SpecialMove extends Move
             return 0;
         }
         else{
-            if(pieces[super.getFromRow()][super.getFromCol()].getNum() != 0){
+            if(pieces[super.getFromRow()][super.getFromCol()].getNum() != 0 && pieces[super.getFromRow()][super.getFromCol()].getNum() != 6){
                 return -1;
             }
             if(super.execute(board) > -1){

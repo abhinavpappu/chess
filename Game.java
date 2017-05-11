@@ -34,6 +34,7 @@ public class Game extends JApplet implements MouseListener, MouseMotionListener
      */
     public void init()
     {
+        ComputerPlayer.trainBlackNetwork();
         squareWidth = getWidth() / 8;
         squareHeight = getHeight() / 8;
         
@@ -93,6 +94,9 @@ public class Game extends JApplet implements MouseListener, MouseMotionListener
         if(!board.movePiece(selectedPiece, mouseRow, mouseCol)){
             //if the move fails (e.g. attempted to move piece of opposite color), then piece is put back in correct spot
             board.getPieces()[selectedPiece.getRow()][selectedPiece.getColumn()] = selectedPiece;
+        }
+        else{
+            ComputerPlayer.play(board);
         }
         dragState = -1;
         repaint();
