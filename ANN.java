@@ -98,4 +98,18 @@ public class ANN
     }
     
     //public void train(double[][] points, double maxError, double learningRate)
+    
+    public double[][][] getWeights(){
+        double[][][] weights = new double[layers.length - 1][0][0];
+        for(int i = 1; i < layers.length; i++){
+            weights[i - 1] = layers[i].getWeights();
+        }
+        return weights;
+    }
+    
+    public void setWeights(double[][][] weights){
+        for(int i = 1; i < layers.length; i++){
+            layers[i].setWeights(weights[i - 1]);
+        }
+    }
 }

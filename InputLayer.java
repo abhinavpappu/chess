@@ -23,6 +23,9 @@ public class InputLayer implements Layer
         return null;
     }
     
+    public void setWeights(double[][] weights){
+    }
+    
     public double[] getBias(){
         return null;
     }

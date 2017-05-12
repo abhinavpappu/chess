@@ -28,7 +28,17 @@ public class Neuron
     }
     
     public double[] getWeights(){
-        return weights;
+        double[] arr = new double[weights.length];
+        for(int i = 0; i < arr.length; i++){
+            arr[i] = weights[i];
+        }
+        return arr;
+    }
+    
+    public void setWeights(double[] arr){
+        for(int i = 0; i < arr.length; i++){
+            weights[i] = arr[i];
+        }
     }
     
     public double getBias(){

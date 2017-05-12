@@ -31,6 +31,12 @@ public class HiddenLayer implements Layer
         return weights;
     }
     
+    public void setWeights(double[][] weights){
+        for(int i = 0; i < neurons.length; i++){
+            neurons[i].setWeights(weights[i]);
+        }
+    }
+    
     public double[] getBias(){
         double[] bias = new double[neurons.length];
         for(int i = 0; i < neurons.length; i++){
