@@ -25,7 +25,7 @@ public class ComputerPlayer
         double[] test = inputs[randInd];
         System.out.println("Test input: " + arrToString(test));
         System.out.println("Network prediction before training: " + arrToString(network.predict(test)));
-        int iterations = 1000;
+        int iterations = 100;
         double lr = .01;
         network.train(inputs, outputs, iterations, lr);
         System.out.println("Done training " + iterations + " iterations with a learning rate of " + lr + " in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds");
@@ -98,8 +98,8 @@ public class ComputerPlayer
             throw new RuntimeException("Error saving weights. Check save location.");
         }
         String str = "", str2 = "";
-        double[][][] weights = network.getWeights();
-        double[][] bias = network.getBias();
+        double[][][] weights = round(network.getWeights(), 5);
+        double[][] bias = round(network.getBias(), 5);
         for(int i = 0; i < weights.length; i++){
             String b = arrToString(bias[i]);
             str2 += b.substring(1, b.length() - 1) + "a,";
@@ -113,6 +113,31 @@ public class ComputerPlayer
         str2 = str2.substring(0, str2.length() - 2);
         pw.print(str + "c" + str2);
         pw.close();
+    }
+    
+    private static double round(double num, int numDecimals){
+        return Math.round(num * Math.pow(10, numDecimals)) / Math.pow(10, numDecimals);
+    }
+    
+    private static double[] round(double[] nums, int numDecimals){
+        for(int i = 0; i < nums.length; i++){
+            nums[i] = round(nums[i], numDecimals);
+        }
+        return nums;
+    }
+    
+    private static double[][] round(double[][] nums, int numDecimals){
+        for(double[] arr : nums){
+            round(arr, numDecimals);
+        }
+        return nums;
+    }
+    
+    private static double[][][] round(double[][][] nums, int numDecimals){
+        for(double[][] arr : nums){
+            round(arr, numDecimals);
+        }
+        return nums;
     }
 
     public static void loadWeights(boolean computerColor){
