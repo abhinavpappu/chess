@@ -19,13 +19,13 @@ public class ComputerPlayer
         }
         double[][] inputs = DatabaseToPoints.getInputs();
         double[][] outputs = DatabaseToPoints.getOutputs();
-        loadWeights(color);
+        //loadWeights(color);
         long time = System.currentTimeMillis();
         int randInd = (int)(Math.random() * inputs.length);
         double[] test = inputs[randInd];
         System.out.println("Test input: " + arrToString(test));
         System.out.println("Network prediction before training: " + arrToString(network.predict(test)));
-        int iterations = 100000;
+        int iterations = 1000;
         double lr = .01;
         network.train(inputs, outputs, iterations, lr);
         System.out.println("Done training " + iterations + " iterations with a learning rate of " + lr + " in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds");
@@ -97,17 +97,21 @@ public class ComputerPlayer
         catch(Exception e){
             throw new RuntimeException("Error saving weights. Check save location.");
         }
-        String str = "";
+        String str = "", str2 = "";
         double[][][] weights = network.getWeights();
-        for(double[][] layer : weights){
-            for(double[] neuron : layer){
+        double[][] bias = network.getBias();
+        for(int i = 0; i < weights.length; i++){
+            String b = arrToString(bias[i]);
+            str2 += b.substring(1, b.length() - 1) + "a,";
+            for(double[] neuron : weights[i]){
                 String a = arrToString(neuron);
                 str += a.substring(1, a.length() - 1) + "b,";
             }
             str = str.substring(0, str.length() - 2) + "a,";
         }
         str = str.substring(0, str.length() - 2);
-        pw.print(str);
+        str2 = str2.substring(0, str2.length() - 2);
+        pw.print(str + "c" + str2);
         pw.close();
     }
 
@@ -117,20 +121,26 @@ public class ComputerPlayer
         try{
             FileReader fileReader = new FileReader(filePath);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
-            String str =  bufferedReader.readLine();
-            String[] arr1 = str.split("a,");
+            String[] str =  bufferedReader.readLine().split("c");
+            String[] arr1 = str[0].split("a,");
+            String[] arr21 = str[1].split("a,");
             String[][] arr2 = new String[arr1.length][0];
+            String[][] arr22 = new String[arr21.length][0];
             for(int i = 0; i < arr1.length; i++){
                 arr2[i] = arr1[i].split("b,");
+                arr22[i] = arr21[i].split("b, ");
             }
             String[][][] arr3 = new String[arr1.length][0][0];
             double[][][] weights = new double[arr1.length][0][0];
+            double[][] bias = new double[arr21.length][0];
             for(int i = 0; i < arr1.length; i++){
                 arr3[i] = new String[arr2[i].length][0];
                 weights[i] = new double[arr2[i].length][0];
+                bias[i] = new double[arr22[i].length];
                 for(int j = 0; j < arr2[i].length; j++){
                     arr3[i][j] = arr2[i][j].split(",");
                     weights[i][j] = new double[arr3[i][j].length];
+                    bias[i][j] = Double.parseDouble(arr22[i][j]);
                     for(int k = 0; k < arr3[i][j].length; k++){
                         weights[i][j][k] = Double.parseDouble(arr3[i][j][k]);
                     }

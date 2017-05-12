@@ -45,6 +45,12 @@ public class OutputLayer implements Layer
         return bias;
     }
     
+    public void setBias(double[] bias){
+        for(int i = 0; i < neurons.length; i++){
+            neurons[i].setBias(bias[i]);
+        }
+    }
+    
     public double[] propogate(double[] input){
         double[] output = new double[neurons.length];
         for(int i = 0; i < output.length; i++){

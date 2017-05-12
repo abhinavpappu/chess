@@ -80,6 +80,14 @@ public class ANN
         }
     }
     
+    /**
+     * Trains network on a set of training points
+     * 
+     * @param inputs inputs of training datatset
+     * @param outputs outputs of trainging dataset
+     * @param iterations number of times to train
+     * @param learningRate how fast the network should learn
+     */
     public void train(double[][] inputs, double[][] outputs, int iterations, double learningRate){
         learningRate *= -1;
         int numErrors = 0;
@@ -94,7 +102,7 @@ public class ANN
                 }
             }
         }
-        //return accumulative error later
+        //return accumulated error later
     }
     
     //public void train(double[][] points, double maxError, double learningRate)
@@ -107,9 +115,23 @@ public class ANN
         return weights;
     }
     
+    public double[][] getBias(){
+        double[][] bias = new double[layers.length - 1][0];
+        for(int i = 1; i < layers.length; i++){
+            bias[i - 1] = layers[i].getBias();
+        }
+        return bias;
+    }
+    
     public void setWeights(double[][][] weights){
         for(int i = 1; i < layers.length; i++){
             layers[i].setWeights(weights[i - 1]);
+        }
+    }
+    
+    public void setBias(double[][] bias){
+        for(int i = 1; i < layers.length; i++){
+            layers[i].setBias(bias[i - 1]);
         }
     }
 }

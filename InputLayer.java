@@ -30,6 +30,9 @@ public class InputLayer implements Layer
         return null;
     }
     
+    public void setBias(double[] bias){
+    }
+    
     public double[] propogate(double[] input){
         previousOutput = input;
         return input;

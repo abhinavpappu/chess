@@ -10,6 +10,7 @@ public interface Layer
     double[][] getWeights();
     void setWeights(double[][] weights);
     double[] getBias();
+    void setBias(double[] bias);
     double[] propogate(double[] input);
     int getNumNeurons();
     double getOutput(int i);

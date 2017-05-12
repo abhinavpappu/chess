@@ -45,6 +45,10 @@ public class Neuron
         return bias;
     }
     
+    public void setBias(double bias){
+        this.bias = bias;
+    }
+    
     /**
      * Multiplies weights to corresponding input, adds bias, and returns activated result
      * @param input the input to process
