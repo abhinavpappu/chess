@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.io.PrintWriter;
 import java.io.FileReader;
 import java.io.BufferedReader;
+import org.jblas.*;
 /**
  * Write a description of class ComputerPlayer here.
  * 
@@ -23,6 +24,10 @@ public class ComputerPlayer
         long time = System.currentTimeMillis();
         int randInd = (int)(Math.random() * inputs.length);
         double[] test = inputs[randInd];
+        while(test.length == 0){
+            randInd = (int)(Math.random() * inputs.length);
+            test = inputs[randInd];
+        }
         System.out.println("Test input: " + arrToString(test));
         System.out.println("Network prediction before training: " + arrToString(network.predict(test)));
         int iterations = 100;
@@ -103,8 +108,8 @@ public class ComputerPlayer
         for(int i = 0; i < weights.length; i++){
             String b = arrToString(bias[i]);
             str2 += b.substring(1, b.length() - 1) + "a,";
-            for(double[] neuron : weights[i]){
-                String a = arrToString(neuron);
+            for(int j = 0; j < weights[i].length; j++){
+                String a = arrToString(weights[i][j]);
                 str += a.substring(1, a.length() - 1) + "b,";
             }
             str = str.substring(0, str.length() - 2) + "a,";

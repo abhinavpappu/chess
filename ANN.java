@@ -26,7 +26,7 @@ public class ANN
 
     public DoubleMatrix predict(DoubleMatrix input){
         outputs = new DoubleMatrix[layers.length + 1];
-        outputs[0] = input;
+        outputs[0] = input.reshape(1, layers[0].rows);
         for(int i = 0; i < layers.length; i++){
             outputs[i + 1] = outputs[i].mmul(layers[i]).addRowVector(biases[i]);
             if(i < layers.length - 1){
@@ -34,6 +34,11 @@ public class ANN
             }
         }
         return outputs[layers.length];
+    }
+    
+    public double[] predict(double[] input){
+        DoubleMatrix output = predict(new DoubleMatrix(input));
+        return output.toArray();
     }
 
     private double cost(double output, double desired){
@@ -68,7 +73,10 @@ public class ANN
             layers[l].addi(outputs[l].transpose().mmul(error).mul(lr));
             error2 = error.dup();
         }
-        
+    }
+    
+    private void trainOne(double[] x, double[] y, double lr){
+        trainOne(new DoubleMatrix(x).reshape(1, x.length), new DoubleMatrix(y).reshape(1, y.length), lr);
     }
 
     /**
@@ -79,15 +87,13 @@ public class ANN
      * @param iterations number of times to train
      * @param learningRate how fast the network should learn
      */
-    public void train(DoubleMatrix inputs, DoubleMatrix outputs, int iterations, double learningRate){
+    public void train(double[][] inputs, double[][] outputs, int iterations, double learningRate){
         learningRate *= -1;
         int numErrors = 0;
         for(int i = 0; i < iterations; i++){
-            int index = (int)(Math.random() * inputs.rows);
-            DoubleMatrix input = inputs.getRow(index);
-            DoubleMatrix output = outputs.getRow(index);
-            if(input.length == layers[0].rows && output.length == layers[layers.length - 1].columns){
-                trainOne(input, output, learningRate);
+            int index = (int)(Math.random() * inputs.length);
+            if(inputs[index].length == layers[0].rows && outputs[index].length == layers[layers.length - 1].columns){
+                trainOne(inputs[index], outputs[index], learningRate);
             }
             else{
                 if(numErrors++ < iterations){
@@ -99,33 +105,33 @@ public class ANN
     }
 
     //public void train(double[][] points, double maxError, double learningRate)
-    /*
+    
     public double[][][] getWeights(){
-        double[][][] weights = new double[layers.length - 1][0][0];
-        for(int i = 1; i < layers.length; i++){
-            weights[i - 1] = layers[i].getWeights();
+        double[][][] weights = new double[layers.length][0][0];
+        for(int i = 0; i < layers.length; i++){
+            weights[i] = layers[i].toArray2();
         }
         return weights;
     }
 
     public double[][] getBias(){
-        double[][] bias = new double[layers.length - 1][0];
-        for(int i = 1; i < layers.length; i++){
-            bias[i - 1] = layers[i].getBias();
+        double[][] bias = new double[layers.length][0];
+        for(int i = 0; i < layers.length; i++){
+            bias[i] = biases[i].toArray();
         }
         return bias;
     }
 
     public void setWeights(double[][][] weights){
-        for(int i = 1; i < layers.length; i++){
-            layers[i].setWeights(weights[i - 1]);
+        for(int i = 0; i < layers.length; i++){
+            layers[i] = new DoubleMatrix(weights[1]);
         }
     }
 
     public void setBias(double[][] bias){
-        for(int i = 1; i < layers.length; i++){
-            layers[i].setBias(bias[i - 1]);
+        for(int i = 0; i < layers.length; i++){
+            biases[i] = new DoubleMatrix(bias[i]).reshape(1, bias[i].length);
         }
     }
-    */
+    
 }
