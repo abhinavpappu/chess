@@ -20,7 +20,7 @@ public class ComputerPlayer
         }
         double[][] inputs = DatabaseToPoints.getInputs();
         double[][] outputs = DatabaseToPoints.getOutputs();
-        //loadWeights(color);
+        loadWeights(color);
         long time = System.currentTimeMillis();
         int randInd = (int)(Math.random() * inputs.length);
         double[] test = inputs[randInd];
@@ -30,7 +30,7 @@ public class ComputerPlayer
         }
         System.out.println("Test input: " + arrToString(test));
         System.out.println("Network prediction before training: " + arrToString(network.predict(test)));
-        int iterations = 100;
+        int iterations = 2000;
         double lr = .01;
         network.train(inputs, outputs, iterations, lr);
         System.out.println("Done training " + iterations + " iterations with a learning rate of " + lr + " in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds");
@@ -158,7 +158,7 @@ public class ComputerPlayer
             String[][] arr22 = new String[arr21.length][0];
             for(int i = 0; i < arr1.length; i++){
                 arr2[i] = arr1[i].split("b,");
-                arr22[i] = arr21[i].split("b, ");
+                arr22[i] = arr21[i].split(",");
             }
             String[][][] arr3 = new String[arr1.length][0][0];
             double[][][] weights = new double[arr1.length][0][0];

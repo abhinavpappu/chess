@@ -109,7 +109,7 @@ public class ANN
     public double[][][] getWeights(){
         double[][][] weights = new double[layers.length][0][0];
         for(int i = 0; i < layers.length; i++){
-            weights[i] = layers[i].toArray2();
+            weights[i] = layers[i].transpose().toArray2();
         }
         return weights;
     }
@@ -124,7 +124,7 @@ public class ANN
 
     public void setWeights(double[][][] weights){
         for(int i = 0; i < layers.length; i++){
-            layers[i] = new DoubleMatrix(weights[1]);
+            layers[i] = new DoubleMatrix(weights[i]).transpose();
         }
     }
 
