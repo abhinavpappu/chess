@@ -1,4 +1,4 @@
-
+import org.jblas.*;
 /**
  * Write a description of class ANN_Tester here.
  * 
@@ -14,18 +14,20 @@ public class ANN_Tester
             inputs[i][0] = i * (2 * Math.PI / inputs.length);
             outputs[i][0] = Math.sin(inputs[i][0]);
         }
+        DoubleMatrix inputMatrix = new DoubleMatrix(inputs);
+        DoubleMatrix outputMatrix = new DoubleMatrix(outputs);
         System.out.println("Training Data:");
         System.out.println(arrToString(inputs));
         System.out.println(arrToString(outputs));
-        double[] test = {Math.PI / 3}; //output should be approximately .866
+        DoubleMatrix test = new DoubleMatrix(1, 1, Math.PI / 3); //output should be approximately .866
         int[] structure = {1, 100, 50, 25, 1};
         ANN network = new ANN(structure);
-        System.out.println("sin(π/3) = " + Math.sin(test[0]));
-        System.out.println("Before Training: sin(π/3) ≈ " + arrToString(network.predict(test)));
+        System.out.println("sin(π/3) = " + Math.sin(test.get(0, 0)));
+        System.out.println("Before Training: sin(π/3) ≈ " + network.predict(test));
         long time = System.currentTimeMillis();
-        network.train(inputs, outputs, 10000, .001);
+        network.train(inputMatrix, outputMatrix, 100000, .001);
         System.out.println("Training complete in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds");
-        System.out.println("After Training: sin(π/3) ≈ " + arrToString(network.predict(test)));
+        System.out.println("After Training: sin(π/3) ≈ " + network.predict(test));
     }
     
     public static void testMove(){
