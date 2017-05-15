@@ -1,87 +1,124 @@
 
 /**
- * Write a description of class Neuron here.
- * 
- * @author (your name) 
- * @version (a version number or a date)
  */
-public class Neuron
+class Neuron
 {
-    private double[] weights;
-    private double bias;
-    private Activation activation;
-    private double previousOutput;
+    private double[] weights; //weights
+    private double[] temp; //temporary weights
+    private double rateConstant; //rate constant
+    private int row;
+    private int col;
+    private double lastOutput; //sigmoid function of the sum of the inputs*weights
+    private double derv; //partial derivitive, the gradient with respect to weight
+    private Network net;
+    /**
+     * creates a bare neuron with random weights
+     */
+    public Neuron(int numNeuron, int row, int col, Network net)
+    {
+        weights = new double[numNeuron+1];
+        rateConstant = 1;
+        this.row = row;
+        this.col = col;
+        this.net = net;
+        for (int i = 0; i<weights.length; i++)
+        {
+            weights[i] = Math.random()*2-1;
+        }
+    }
 
     /**
-     * Creates a new neuron initialized with random weigths and bias
-     * @param numWeights number of weights to initialize neuron with
-     * @param activation activation function to use
+     * Returns the value of sigmoid based on input and weight
      */
-    public Neuron(int numWeights, Activation activation)
+    public double feed(double[] inputs)
     {
-        weights = new double[numWeights];
-        for(int i = 0; i < weights.length; i++){
-            weights[i] = Math.random() * 2 - 1;
+        double[] copyIn = clone(inputs);
+        if(copyIn.length - 1 >= 0)
+        {
+          copyIn[copyIn.length -1 ] = 1; //bias input
+        }   
+        double sum = 0;
+        for (int i = 0; i < inputs.length; i++)
+        {
+            sum += copyIn[i]*weights[i]; //multiplies the inputs by weights
         }
-        bias = Math.random();
-        this.activation = activation;
+
+        lastOutput = sigmoid(sum);
+        return lastOutput;
     }
-    
-    public double[] getWeights(){
-        double[] arr = new double[weights.length];
-        for(int i = 0; i < arr.length; i++){
-            arr[i] = weights[i];
+
+    /**
+     * Adjusts weights based on errors
+     */
+    public void train(double[] inputs, double desired[])
+    {
+        temp = clone(weights);
+        if (row == net.getNeurons().size() - 1) //if outer layer
+        {
+            if(desired.length>0)
+                derv = (lastOutput - desired[col]) * lastOutput*(1-lastOutput);
         }
-        return arr;
-    }
-    
-    public void setWeights(double[] arr){
-        for(int i = 0; i < arr.length; i++){
-            weights[i] = arr[i];
+        else //if hidden layer
+        {
+            derv = 0;
+            for (int c = 0; c < net.getNeurons().get(row+1).size(); c++)
+            {
+                Neuron n = net.getNeurons().get(row+1).get(c);
+                derv += n.getPart() * n.getWeights()[col];
+            }
+            derv *= lastOutput * (1 - lastOutput);
+        }
+        for (int i = 0; i <weights.length; i++)
+        {
+            double in = 1;
+            
+            if (row == 0 && i != weights.length-1){
+                if(inputs.length>0)
+                  in = inputs[i];
+            }
+            else if(i != weights.length-1)
+                in = net.getNeurons().get(row - 1).get(i).getLastOutput();
+            else
+                in = 1; //bias input
+            temp[i] -= rateConstant * derv * in;
         }
     }
     
-    public double getBias(){
-        return bias;
-    }
-    
-    public void setBias(double bias){
-        this.bias = bias;
+    public void updateWeights()
+    {
+        weights = temp;
     }
     
     /**
-     * Multiplies weights to corresponding input, adds bias, and returns activated result
-     * @param input the input to process
-     * @return output after processing input
+     * Logistic activation function
      */
-    public double process(double[] input){
-        double output = 0;
-        for(int i = 0; i < input.length; i++){
-            output += weights[i] * input[i];
+    public static double sigmoid(double n)
+    {
+        return 1/(1+Math.exp(-n));
+    }
+
+    public double[] getWeights()
+    {
+        return weights;
+    }
+
+    public double getLastOutput()
+    {
+        return lastOutput;
+    }
+
+    public double getPart()
+    {
+        return derv;
+    }
+    
+    public double[] clone(double[] in)
+    {
+        double[] copy = new double[in.length];
+        for (int i = 0; i < in.length; i++)
+        {
+            copy[i]=in[i];
         }
-        output += bias;
-        output = activation.activate(output);
-        previousOutput = output;
-        return output;
-    }
-    
-    public double getOutput(){
-        return previousOutput;
-    }
-    
-    public double getOutputDeriv(){
-        return activation.derivative(previousOutput);
-    }
-    
-    public double getWeight(int i){
-        return weights[i];
-    }
-    
-    public void updateBias(double change){
-        bias += change;
-    }
-    
-    public void updateWeight(int i, double change){
-        weights[i] += change;
+        return copy;
     }
 }

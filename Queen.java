@@ -8,7 +8,7 @@ public class Queen implements Piece
 {
     private boolean color, isInDanger;
     private int row, col;
-    
+    private double weight;
     /**
      * 
      * @param color color of piece (true - white, false - black)
@@ -18,6 +18,7 @@ public class Queen implements Piece
     {
         this.color = color;
         move(row, col);
+        weight = 5.0;
     }
     
     public int getValue(){
@@ -96,5 +97,10 @@ public class Queen implements Piece
     
     public Piece clone(){
         return new Queen(color, row, col);
+    }
+    
+    public double getWeight()
+    {
+        return weight;
     }
 }
