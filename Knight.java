@@ -8,7 +8,7 @@ public class Knight implements Piece
 {
     private boolean color, isInDanger;
     private int row, col;
-    
+    private double weight;
     /**
      * 
      * @param color color of piece (true - white, false - black)
@@ -18,6 +18,7 @@ public class Knight implements Piece
     {
         this.color = color;
         move(row, col);
+        weight = 2.0;
     }
     
     public int getValue(){
@@ -79,5 +80,10 @@ public class Knight implements Piece
     
     public Piece clone(){
         return new Knight(color, row, col);
+    }
+    
+    public double getWeight()
+    {
+        return weight;
     }
 }

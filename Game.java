@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.awt.*;
 import javax.swing.*;
@@ -33,7 +34,7 @@ public class Game extends JApplet implements MouseListener, MouseMotionListener
      */
     public void init()
     {
-        ComputerPlayer.loadWeights(false);
+        ComputerPlayer.trainBlackNetwork();
         squareWidth = getWidth() / 8;
         squareHeight = getHeight() / 8;
         

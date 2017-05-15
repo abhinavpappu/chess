@@ -8,7 +8,7 @@ public class Bishop implements Piece
 {
     private boolean color, isInDanger;
     private int row, col;
-    
+    private double weight;
     /**
      * 
      * @param color color of piece (true - white, false - black)
@@ -17,6 +17,7 @@ public class Bishop implements Piece
     public Bishop(boolean color, int row, int col)
     {
         this.color = color;
+        weight = 3.0;
         move(row, col);
     }
     
@@ -94,5 +95,10 @@ public class Bishop implements Piece
     
     public Piece clone(){
         return new Bishop(color, row, col);
+    }
+    
+        public double getWeight()
+    {
+        return weight;
     }
 }

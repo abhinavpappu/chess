@@ -8,7 +8,7 @@ public class Rook implements Piece
 {
     private boolean color, isInDanger, touched;
     private int row, col;
-    
+    private double weight;
     /**
      * 
      * @param color color of piece (true - white, false - black)
@@ -19,6 +19,7 @@ public class Rook implements Piece
         this.color = color;
         move(row, col);
         touched = false;
+        weight = 4.0;
     }
     
     public int getValue(){
@@ -98,5 +99,10 @@ public class Rook implements Piece
     
     public Piece clone(){
         return new Rook(color, row, col);
+    }
+    
+        public double getWeight()
+    {
+        return weight;
     }
 }

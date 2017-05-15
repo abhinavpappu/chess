@@ -8,7 +8,7 @@ public class Pawn implements Piece
 {
     private boolean color, isInDanger;
     private int row, col;
-    
+    private double weight;
     /**
      * 
      * @param color color of piece (true - white, false - black)
@@ -16,6 +16,7 @@ public class Pawn implements Piece
      */
     public Pawn(boolean color, int row, int col) {
         this.color = color;
+        weight = 1.0;
         move(row, col);
     }
     
@@ -88,5 +89,10 @@ public class Pawn implements Piece
     
     public Piece clone(){
         return new Pawn(color, row, col);
+    }
+    
+    public double getWeight()
+    {
+        return weight;
     }
 }

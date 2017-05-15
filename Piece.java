@@ -18,4 +18,5 @@ public interface Piece
     ArrayList<Move> getMoves(Board board);
     Piece move(int row, int col);
     Piece clone();
+    double getWeight();
 }

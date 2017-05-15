@@ -8,7 +8,7 @@ public class King implements Piece
 {
     private boolean color, isInDanger, touched;
     private int row, col;
-    
+    private double weight;
     /**
      * 
      * @param color color of piece (true - white, false - black)
@@ -19,6 +19,7 @@ public class King implements Piece
         this.color = color;
         move(row, col);
         touched = false;
+        weight = 6.0;
     }
     
     public int getValue(){
@@ -99,5 +100,10 @@ public class King implements Piece
     
     public Piece clone(){
         return new King(color, row, col);
+    }
+    
+        public double getWeight()
+    {
+        return weight;
     }
 }
