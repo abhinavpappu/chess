@@ -11,16 +11,17 @@ import org.jblas.*;
  */
 public class ComputerPlayer
 {
-    private static ANN network = new ANN(new int[]{768, 768, 768, 96, 64, 12, 1});
-    private static boolean color = true;
+    private boolean color;
+    private ANN network;
 
-    private static void trainNetwork(){
+    private static void trainNetwork(boolean color){
         if(DatabaseToPoints.getOutputs().length == 0){
             DatabaseToPoints.generate(color);
         }
         double[][] inputs = DatabaseToPoints.getInputs();
         double[][] outputs = DatabaseToPoints.getOutputs();
-        loadWeights(color);
+        ANN trainingNetwork = new ANN(new int[]{768, 768, 768, 96, 64, 12, 1});
+        loadWeights(color, trainingNetwork);
         long time = System.currentTimeMillis();
         int randInd = (int)(Math.random() * inputs.length);
         double[] test = inputs[randInd];
@@ -29,29 +30,33 @@ public class ComputerPlayer
             test = inputs[randInd];
         }
         System.out.println("Test input: " + arrToString(test));
-        System.out.println("Network prediction before training: " + arrToString(network.predict(test)));
-        int iterations = 2000;
+        System.out.println("Network prediction before training: " + arrToString(trainingNetwork.predict(test)));
+        int iterations = 100000;
         double lr = .01;
-        network.train(inputs, outputs, iterations, lr);
+        trainingNetwork.train(inputs, outputs, iterations, lr);
         System.out.println("Done training " + iterations + " iterations with a learning rate of " + lr + " in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds");
-        System.out.println("Network prediction after training: " + arrToString(network.predict(test)));
+        System.out.println("Network prediction after training: " + arrToString(trainingNetwork.predict(test)));
         System.out.println("Actual Output: " + arrToString(outputs[randInd]));
         time = System.currentTimeMillis();
-        saveWeights();
+        saveWeights(color, trainingNetwork);
         System.out.println("Saved weights in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds");
     }
 
     public static void trainWhiteNetwork(){
-        color = true;
-        trainNetwork();
+        trainNetwork(true);
     }
 
     public static void trainBlackNetwork(){
-        color = false;
-        trainNetwork();
+        trainNetwork(false);
+    }
+    
+    public ComputerPlayer(boolean color){
+        this.color = color;
+        network = new ANN(new int[]{768, 768, 768, 96, 64, 12, 1});
+        loadWeights(color, network);
     }
 
-    public static void play(Board board){
+    public void play(Board board){
         ArrayList<Move> moves = board.getAllMoves(color);
         double max = score(moves.get(0), board);
         int maxInd = 0;
@@ -65,7 +70,7 @@ public class ComputerPlayer
         moves.get(maxInd).execute(board);
     }
 
-    private static double score(Move move, Board board){
+    private double score(Move move, Board board){
         Board board2 = new Board(board);
         move.execute(board2);
         return network.predict(toInput(board2.getPieces()))[0];
@@ -93,7 +98,7 @@ public class ComputerPlayer
         return arr;
     }
 
-    private static void saveWeights(){
+    private static void saveWeights(boolean color, ANN network){
         String filePath = "TrainedWeights/" + (color? "White.txt" : "Black.txt");
         PrintWriter pw = null;
         try{
@@ -145,8 +150,7 @@ public class ComputerPlayer
         return nums;
     }
 
-    public static void loadWeights(boolean computerColor){
-        color = computerColor;
+    public static void loadWeights(boolean color, ANN network){
         String filePath = "TrainedWeights/" + (color? "White.txt" : "Black.txt");
         try{
             FileReader fileReader = new FileReader(filePath);
