@@ -57,7 +57,7 @@ public class King implements Piece
         return touched;
     }
     
-    public ArrayList<Move> getMoves(Board board){
+    public ArrayList<Move> getMoves(Board board, boolean removeCheck){
         ArrayList<Move> moves = new ArrayList<Move>();
         for(int j = -1; j <= 1; j++){
             for(int k = -1; k <= 1; k++){
@@ -83,7 +83,18 @@ public class King implements Piece
         if(SpecialMove.checkCastleValidity(board, board.getPlayerColor(), color, false)){
             moves.add(new SpecialMove(color, false, board.getPlayerColor()));
         }
+        if(removeCheck){
+            for(int i = moves.size() - 1; i >= 0; i--){
+                if(board.wouldBeCheck(moves.get(i), color)){
+                    moves.remove(i);
+                }
+            }
+        }
         return moves;
+    }
+    
+    public ArrayList<Move> getMoves(Board board){
+        return getMoves(board, true);
     }
     
     public Piece move(int row, int col){

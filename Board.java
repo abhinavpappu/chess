@@ -120,7 +120,7 @@ public class Board
     public Piece getPiece(int row, int col){
         return pieces[row][col];
     }
-
+    
     /**
      * Moves a piece to desired location
      * 
@@ -131,9 +131,11 @@ public class Board
      */
     public boolean movePiece(Piece piece, int row, int col){
         Move requestedMove = new Move(row, col, piece.getRow(), piece.getColumn());
-        if(piece.getMoves(this).contains(requestedMove)){
-            pieces[piece.getRow()][piece.getColumn()] = piece;
-            int result = requestedMove.execute(this);
+        ArrayList<Move> moves = piece.getMoves(this);
+        int index = moves.indexOf(requestedMove);
+        if(index > -1){
+            pieces[piece.getRow()][piece.getColumn()] = piece; //unnecessary
+            int result = moves.get(index).execute(this);
             if(result >= 0){
                 if(piece.getColor() == getPlayerColor()){
                     playerScore += result;
@@ -144,6 +146,13 @@ public class Board
                 return true;
             }
             return false;
+        }
+        return false;
+    }
+    
+    public boolean movePiece(int fromIndex, int toIndex){
+        if(getPiece(fromIndex / 8, fromIndex % 8) != null){
+            return movePiece(getPiece(fromIndex / 8, fromIndex % 8), toIndex / 8, toIndex % 8);
         }
         return false;
     }
@@ -183,14 +192,7 @@ public class Board
         for(Piece[] row : pieces){
             for(Piece piece : row){
                 if(piece != null && piece.getColor() == color){
-                    moves.addAll(piece.getMoves(this));
-                }
-            }
-        }
-        if(removeCheck){
-            for(int i = moves.size() - 1; i >= 0; i--){
-                if(wouldBeCheck(moves.get(i), color)){
-                    moves.remove(i);
+                    moves.addAll(piece.getMoves(this, removeCheck));
                 }
             }
         }

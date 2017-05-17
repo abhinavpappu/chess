@@ -15,6 +15,7 @@ public interface Piece
     int getColumn();
     boolean isInDanger();
     void setInDanger(boolean inDanger);
+    ArrayList<Move> getMoves(Board board, boolean removeCheck);
     ArrayList<Move> getMoves(Board board);
     Piece move(int row, int col);
     Piece clone();

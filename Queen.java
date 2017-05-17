@@ -52,7 +52,7 @@ public class Queen implements Piece
         isInDanger = inDanger;
     }
     
-    public ArrayList<Move> getMoves(Board board){
+    public ArrayList<Move> getMoves(Board board, boolean removeCheck){
         ArrayList<Move> moves = new ArrayList<Move>();
         boolean[] stop = {false, false, false, false, false, false, false, false};
         for(int i = 1; i <= 7; i++){
@@ -81,7 +81,18 @@ public class Queen implements Piece
                 }
             }
         }
+        if(removeCheck){
+            for(int i = moves.size() - 1; i >= 0; i--){
+                if(board.wouldBeCheck(moves.get(i), color)){
+                    moves.remove(i);
+                }
+            }
+        }
         return moves;
+    }
+    
+    public ArrayList<Move> getMoves(Board board){
+        return getMoves(board, true);
     }
     
     public Piece move(int row, int col){

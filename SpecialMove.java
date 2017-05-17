@@ -93,6 +93,7 @@ public class SpecialMove extends Move
         return true;
     }
     
+    @Override
     public int execute(Board board){
         Piece[][] pieces = board.getPieces();
         if(type){
@@ -121,11 +122,12 @@ public class SpecialMove extends Move
             if(pieces[super.getFromRow()][super.getFromCol()].getNum() != 0 && pieces[super.getFromRow()][super.getFromCol()].getNum() != 6){
                 return -1;
             }
-            if(super.execute(board) > -1){
+            int result = super.execute(board);
+            if(result > -1){
                 Piece pawn = pieces[super.getRow()][super.getCol()];
                 pieces[super.getRow()][super.getCol()] = getPiece(pawn.getColor(), pawn.getRow(), pawn.getColumn());
                 board.updateInDangers();
-                return 0;
+                return 100;
             }
             else{
                 return -1;
@@ -194,6 +196,6 @@ public class SpecialMove extends Move
         if(type){
             return ((color)? "White" : "Black") + ((side)? " Kingside" : " Queenside") + " Castle";
         }
-        return "";
+        return "Pawn Promotion " + super.toString();
     }
 }

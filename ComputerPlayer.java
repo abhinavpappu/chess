@@ -11,6 +11,7 @@ import org.jblas.*;
  */
 public class ComputerPlayer
 {
+    private static final int[] structure = {768, 1000, 1000, 1};
     private boolean color;
     private ANN network;
 
@@ -20,7 +21,7 @@ public class ComputerPlayer
         }
         double[][] inputs = DatabaseToPoints.getInputs();
         double[][] outputs = DatabaseToPoints.getOutputs();
-        ANN trainingNetwork = new ANN(new int[]{768, 768, 768, 96, 64, 12, 1});
+        ANN trainingNetwork = new ANN(structure);
         loadWeights(color, trainingNetwork);
         long time = System.currentTimeMillis();
         int randInd = (int)(Math.random() * inputs.length);
@@ -31,8 +32,8 @@ public class ComputerPlayer
         }
         System.out.println("Test input: " + arrToString(test));
         System.out.println("Network prediction before training: " + arrToString(trainingNetwork.predict(test)));
-        int iterations = 100000;
-        double lr = .01;
+        int iterations = 1000;
+        double lr = .0001;
         trainingNetwork.train(inputs, outputs, iterations, lr);
         System.out.println("Done training " + iterations + " iterations with a learning rate of " + lr + " in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds");
         System.out.println("Network prediction after training: " + arrToString(trainingNetwork.predict(test)));
@@ -52,7 +53,7 @@ public class ComputerPlayer
     
     public ComputerPlayer(boolean color){
         this.color = color;
-        network = new ANN(new int[]{768, 768, 768, 96, 64, 12, 1});
+        network = new ANN(structure);
         loadWeights(color, network);
     }
 

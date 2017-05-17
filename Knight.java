@@ -52,7 +52,7 @@ public class Knight implements Piece
         isInDanger = inDanger;
     }
     
-    public ArrayList<Move> getMoves(Board board){
+    public ArrayList<Move> getMoves(Board board, boolean removeCheck){
         ArrayList<Move> moves = new ArrayList<Move>();
         for(int i = -1; i <= 1 ; i+=2){ // sign for one direction ( + or - )
             for(int j = -1; j <= 1; j+=2){ //sign for other direction
@@ -64,7 +64,18 @@ public class Knight implements Piece
                 }
             }
         }
+        if(removeCheck){
+            for(int i = moves.size() - 1; i >= 0; i--){
+                if(board.wouldBeCheck(moves.get(i), color)){
+                    moves.remove(i);
+                }
+            }
+        }
         return moves;
+    }
+    
+    public ArrayList<Move> getMoves(Board board){
+        return getMoves(board, true);
     }
     
     public Piece move(int row, int col){
