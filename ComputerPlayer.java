@@ -56,22 +56,49 @@ public class ComputerPlayer
         network = new ANN(structure);
         loadWeights(color, network);
     }
+    
+    public String compareWeights(ComputerPlayer cp){ //temp
+        double[][][] weights = network.getWeights();
+        double[][][] weights2 = cp.network.getWeights();
+        double[][] biases = network.getBias();
+        double[][] biases2 = cp.network.getBias();
+        for(int i = 0; i < weights.length; i++){
+            for(int j = 0; j < weights[i].length; j++){
+                if(biases[i][j] != biases2[i][j]){
+                    return "Bias at " + i + ", " + j;
+                }
+                for(int k = 0; k < weights[i][j].length; k++){
+                    if(weights[i][j][k] != weights2[i][j][k]){
+                        return "Weight at " + i + ", " + j + ", " + k;
+                    }
+                }
+            }
+        }
+        return "Same";
+    }
 
     public void play(Board board){
         ArrayList<Move> moves = board.getAllMoves(color);
+        System.out.println(moves); //temp
+        ArrayList<Double> outputs = new ArrayList<Double>(); //temp
+        ArrayList<Double> outputs2 = new ArrayList<Double>(); //temp
         double max = score(moves.get(0), board);
         int maxInd = 0;
         for(int i = 1; i < moves.size(); i++){
             double output = score(moves.get(i), board);
+            outputs.add(round(output, 2)); //temp
+            outputs2.add(round(score(moves.get(i), board), 2)); //temp
             if(output > max){
                 max = output;
                 maxInd = i;
             }
         }
+        System.out.println(outputs); //temp
+        System.out.println(outputs2); //temp
         moves.get(maxInd).execute(board);
     }
 
-    private double score(Move move, Board board){
+    public double score(Move move, Board board){ //temporarily public
         Board board2 = new Board(board);
         move.execute(board2);
         return network.predict(toInput(board2.getPieces()))[0];

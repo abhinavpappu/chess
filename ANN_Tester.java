@@ -18,12 +18,12 @@ public class ANN_Tester
         System.out.println(arrToString(inputs));
         System.out.println(arrToString(outputs));
         DoubleMatrix test = new DoubleMatrix(1, 1, Math.PI / 3);
-        int[] structure = {1, 100, 50, 25, 1};
+        int[] structure = {1, 100, 50, 1};
         ANN network = new ANN(structure);
         System.out.println("sin(π/3) = " + Math.sin(test.get(0, 0)));
         System.out.println("Before Training: sin(π/3) ≈ " + network.predict(test));
         long time = System.currentTimeMillis();
-        network.train(inputs, outputs, 100000, .001);
+        network.train(inputs, outputs, 10000, .01);
         System.out.println("Training complete in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds");
         System.out.println("After Training: sin(π/3) ≈ " + network.predict(test));
     }
@@ -49,6 +49,16 @@ public class ANN_Tester
         Move move = new SpecialMove(true, true, true);
         move.execute(board);
         System.out.println(board);
+    }
+    
+    public static void testLoadWeights(){
+        ComputerPlayer cp1 = new ComputerPlayer(false);
+        ComputerPlayer cp2 = new ComputerPlayer(false);
+        System.out.println(cp1.compareWeights(cp2));
+        Board board = new Board(true);
+        Move move = board.getAllMoves(false).get(0);
+        System.out.println(cp1.score(move, board));
+        System.out.println(cp2.score(move, board));
     }
     
     private static String arrToString(double[] arr){
