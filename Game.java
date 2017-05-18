@@ -11,13 +11,53 @@ import java.util.ArrayList;
 public class Game
 {
     public static void main(String[] args){
-        Color boardWhite = new Color(176, 190, 197), boardBlack = new Color(84, 110, 122);
         JFrame frame = new JFrame("Chess");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 500);
+        askColor(frame);
+    }
+    
+    private static void askColor(JFrame frame){
+        frame.setLayout(new GridLayout(2, 1));
+        JButton whiteButton = new JButton("White");
+        whiteButton.setBackground(Color.WHITE);
+        whiteButton.setFont(new Font("Helvetica", Font.BOLD, 75));
+        whiteButton.setFocusPainted(false);
+        JButton blackButton = new JButton("Black");
+        blackButton.setBackground(Color.BLACK);
+        blackButton.setForeground(Color.WHITE);
+        blackButton.setFont(new Font("Helvetic", Font.BOLD, 75));
+        blackButton.setFocusPainted(false);
+        frame.add(whiteButton);
+        frame.add(blackButton);
+        frame.setVisible(true);
+        
+        whiteButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                removeAll(frame);
+                setUpBoard(frame, true);
+            }
+        });
+        
+        blackButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                removeAll(frame);
+                setUpBoard(frame, false);
+            }
+        });
+    }
+    
+    private static void removeAll(JFrame frame){
+        frame.getContentPane().removeAll();
+        frame.revalidate();
+        frame.repaint();
+    }
+    
+    private static void setUpBoard(JFrame frame, boolean playerColor){
+        Color boardWhite = new Color(176, 190, 197), boardBlack = new Color(84, 110, 122);
         frame.setLayout(new GridLayout(8, 8));
-        Board board = new Board(true);
-        ComputerPlayer cp = new ComputerPlayer(false);
+        Board board = new Board(playerColor);
+        ComputerPlayer cp = new ComputerPlayer(!playerColor);
         JPanel[][] squares = new JPanel[8][8];
         JLabel[][] labels = new JLabel[8][8];
         for(int i = 0; i < 8; i++){
@@ -49,8 +89,9 @@ public class Game
             }
         });
         
-        //an array since Java doesn't let you modify local variables in anonymous classes
+        //arrays since Java doesn't let you modify local variables in anonymous classes
         int[] index = {-1};
+        boolean[] isPlayerTurn = {false};
         frame.addMouseListener(new MouseAdapter(){
             public void mousePressed(MouseEvent e){
                 int row = (e.getY() - frame.getInsets().top) / squares[0][0].getHeight();
@@ -66,21 +107,37 @@ public class Game
                 int row = (e.getY() - frame.getInsets().top) / squares[0][0].getHeight();
                 int col = (e.getX() - frame.getInsets().left) / squares[0][0].getWidth();
                 int toIndex = row * 8 + col;
-                if(index[0] > -1 && index[0] < 64){
-                    if(board.movePiece(index[0], toIndex)){
+                if(index[0] > -1 && index[0] < 64 && isPlayerTurn[0]){
+                    if(board.movePiece(index[0], toIndex, playerColor)){
+                        isPlayerTurn[0] = false;
                         updateBoard(labels, board);
-                        new Thread(new Runnable(){
-                            public void run(){
-                                cp.play(board);
-                                updateBoard(labels, board);
-                            }
-                        }).start();
+                        if(board.getAllMoves(!playerColor).size() > 0){
+                            new Thread(new Runnable(){
+                                public void run(){
+                                    cp.play(board);
+                                    updateBoard(labels, board);
+                                    if(board.getAllMoves(playerColor).size() == 0){
+                                        gameOver(frame, !playerColor);
+                                    }
+                                    else{
+                                        isPlayerTurn[0] = true;
+                                    }
+                                }
+                            }).start();
+                        }
+                        else{
+                            gameOver(frame, playerColor);
+                        }
                     }
                 }
             }
         });
         
-        frame.setVisible(true);
+        if(!playerColor){
+            cp.play(board);
+        }
+        updateBoard(labels, board);
+        isPlayerTurn[0] = true;
     }
     
     private static void updateBoard(JLabel[][] labels, Board board){
@@ -109,5 +166,21 @@ public class Game
                 panel.setBorder(null);
             }
         }
+    }
+    
+    private static void gameOver(JFrame frame, boolean winnerColor){
+        JPanel overlay = new JPanel();
+        //overlay.setOpaque(false);
+        overlay.setLayout(new GridBagLayout());
+        String winner = winnerColor? "White" : "Black";
+        JLabel text = new JLabel("<html>Game Over<br>" + winner + " Wins</html>");
+        text.setFont(new Font("Helvetic", Font.BOLD, 50));
+        overlay.add(text, new GridBagConstraints());
+        text.setForeground(Color.WHITE);
+        overlay.setBackground(new Color(0,0,0,0));
+        frame.setGlassPane(overlay);
+        overlay.setVisible(true);
+        overlay.setBackground(new Color(0,0,0,175));
+        frame.repaint();
     }
 }

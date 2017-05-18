@@ -150,9 +150,13 @@ public class Board
         return false;
     }
     
-    public boolean movePiece(int fromIndex, int toIndex){
-        if(getPiece(fromIndex / 8, fromIndex % 8) != null){
-            return movePiece(getPiece(fromIndex / 8, fromIndex % 8), toIndex / 8, toIndex % 8);
+    public boolean movePiece(int fromIndex, int toIndex, boolean color){
+        Piece piece = getPiece(fromIndex / 8, fromIndex % 8);
+        if(piece != null){
+            if(piece.getColor() == color){
+                return movePiece(piece, toIndex / 8, toIndex % 8);
+            }
+            return false;
         }
         return false;
     }
