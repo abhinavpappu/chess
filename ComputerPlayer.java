@@ -65,7 +65,7 @@ public class ComputerPlayer
         for(int i = 0; i < weights.length; i++){
             for(int j = 0; j < weights[i].length; j++){
                 if(biases[i][j] != biases2[i][j]){
-                    return "Bias at " + i + ", " + j;
+                    return "Bias at " + i + ", " + j + "\t\t" + biases[i][j] + " != " + biases2[i][j];
                 }
                 for(int k = 0; k < weights[i][j].length; k++){
                     if(weights[i][j][k] != weights2[i][j][k]){
@@ -79,22 +79,15 @@ public class ComputerPlayer
 
     public void play(Board board){
         ArrayList<Move> moves = board.getAllMoves(color);
-        System.out.println(moves); //temp
-        ArrayList<Double> outputs = new ArrayList<Double>(); //temp
-        ArrayList<Double> outputs2 = new ArrayList<Double>(); //temp
         double max = score(moves.get(0), board);
         int maxInd = 0;
         for(int i = 1; i < moves.size(); i++){
             double output = score(moves.get(i), board);
-            outputs.add(round(output, 2)); //temp
-            outputs2.add(round(score(moves.get(i), board), 2)); //temp
             if(output > max){
                 max = output;
                 maxInd = i;
             }
         }
-        System.out.println(outputs); //temp
-        System.out.println(outputs2); //temp
         moves.get(maxInd).execute(board);
     }
 
@@ -209,6 +202,7 @@ public class ComputerPlayer
                 }
             }
             network.setWeights(weights);
+            network.setBias(bias);
             bufferedReader.close();
         }
         catch(Exception e){

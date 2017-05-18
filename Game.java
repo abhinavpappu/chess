@@ -68,8 +68,13 @@ public class Game
                 int toIndex = row * 8 + col;
                 if(index[0] > -1 && index[0] < 64){
                     if(board.movePiece(index[0], toIndex)){
-                        cp.play(board);
                         updateBoard(labels, board);
+                        new Thread(new Runnable(){
+                            public void run(){
+                                cp.play(board);
+                                updateBoard(labels, board);
+                            }
+                        }).start();
                     }
                 }
             }
