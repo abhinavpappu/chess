@@ -13,7 +13,7 @@ public class DatabaseToPoints
     
     public static void generate(boolean color){
         long time = System.currentTimeMillis();
-        String filePath = "Dataset/First1MB.txt";
+        String filePath = "Dataset/First2MB.txt";
         String data = readFile(filePath);
         String[] games = data.split("\\n*\\[Event \"(.|\\n)*?\\n\\n\\n*");
         //games[0] is ""

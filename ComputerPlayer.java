@@ -32,7 +32,7 @@ public class ComputerPlayer
         }
         System.out.println("Test input: " + arrToString(test));
         System.out.println("Network prediction before training: " + arrToString(trainingNetwork.predict(test)));
-        int iterations = 100000;
+        int iterations = 1000000;
         double lr = .0001;
         trainingNetwork.train(inputs, outputs, iterations, lr);
         System.out.println("Done training " + iterations + " iterations with a learning rate of " + lr + " in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds");
