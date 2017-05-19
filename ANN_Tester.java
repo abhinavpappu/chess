@@ -51,16 +51,6 @@ public class ANN_Tester
         System.out.println(board);
     }
     
-    public static void testLoadWeights(){
-        ComputerPlayer cp1 = new ComputerPlayer(false);
-        ComputerPlayer cp2 = new ComputerPlayer(false);
-        System.out.println(cp1.compareWeights(cp2));
-        Board board = new Board(true);
-        Move move = board.getAllMoves(false).get(0);
-        System.out.println(cp1.score(move, board));
-        System.out.println(cp2.score(move, board));
-    }
-    
     private static String arrToString(double[] arr){
         String str = "[";
         for(double val : arr){

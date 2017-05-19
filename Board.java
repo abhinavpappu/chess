@@ -33,15 +33,7 @@ public class Board
     }
     
     public Board(Board board){
-        pieces = new Piece[8][8];
-        for(int i = 0; i < pieces.length; i++){
-            for(int j = 0; j < pieces[i].length; j++){
-                pieces[i][j] = (board.getPiece(i, j) == null)? null : board.getPiece(i, j).clone();
-            }
-        }
-        playerColor = board.getPlayerColor();
-        playerScore = board.getPlayerScore();
-        computerScore = board.getComputerScore();
+        copyFrom(board);
     }
 
     private void setUp(){
@@ -161,6 +153,24 @@ public class Board
         return false;
     }
     
+    public boolean movePiece(Move move){
+        Piece piece = getPiece(move.getFromRow(), move.getFromCol());
+        if(piece != null){
+            int result = move.execute(this);
+            if(result >= 0){
+                if(piece.getColor() == getPlayerColor()){
+                    playerScore += result;
+                }
+                else{
+                    computerScore += result;
+                }
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+    
     public void updateInDangers(){
         for(Piece[] row : pieces){
             for(Piece piece : row){
@@ -211,6 +221,19 @@ public class Board
         Board board = new Board(this);
         move.execute(board);
         return board.isCheck(color);
+    }
+    
+    public Board copyFrom(Board board){
+        pieces = new Piece[8][8];
+        for(int i = 0; i < pieces.length; i++){
+            for(int j = 0; j < pieces[i].length; j++){
+                pieces[i][j] = (board.getPiece(i, j) == null)? null : board.getPiece(i, j).clone();
+            }
+        }
+        playerColor = board.getPlayerColor();
+        playerScore = board.getPlayerScore();
+        computerScore = board.getComputerScore();
+        return this;
     }
 
     public String toString(){

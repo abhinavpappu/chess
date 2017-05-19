@@ -79,22 +79,88 @@ public class ComputerPlayer
 
     public void play(Board board){
         ArrayList<Move> moves = board.getAllMoves(color);
-        double max = score(moves.get(0), board);
+        Board board2 = new Board(board);
+        double max = score(moves.get(0), board2);
         int maxInd = 0;
         for(int i = 1; i < moves.size(); i++){
-            double output = score(moves.get(i), board);
+            double output = score(moves.get(i), board2.copyFrom(board));
             if(output > max){
                 max = output;
                 maxInd = i;
             }
         }
-        moves.get(maxInd).execute(board);
+        board.movePiece(moves.get(maxInd));
     }
 
-    public double score(Move move, Board board){ //temporarily public
-        Board board2 = new Board(board);
-        move.execute(board2);
-        return network.predict(toInput(board2.getPieces()))[0];
+    private double score(Move move, Board board){
+        board.movePiece(move);
+        return network.predict(toInput(board.getPieces()))[0];
+    }
+    
+    public void play2(Board board){
+        ArrayList<Move> moves = board.getAllMoves(color);
+        int num = 3; //number of moves to look ahead
+        int max = Integer.MIN_VALUE;
+        Board[] boards = new Board[num + 1];
+        boards[boards.length - 1] = board;
+        for(int i = 0; i < boards.length - 1; i++){
+            boards[i] = new Board(board);
+        }
+        int[] scores = new int[moves.size()];
+        for(int i = 0; i < moves.size(); i++){
+            scores[i] = score2(moves.get(i), boards, num - 1);
+            if(scores[i] > max){
+                max = scores[i];
+            }
+        }
+        ArrayList<Move> bestMoves = new ArrayList<Move>();
+        for(int i = 0; i < scores.length; i++){
+            if(scores[i] == max){
+                bestMoves.add(moves.get(i));
+            }
+        }
+        board.movePiece(bestMoves.get((int)(Math.random() * bestMoves.size())));
+    }
+    
+    private int score2(Move move, Board[] boards, int depth){
+        if(depth <= 0){
+            boards[depth].copyFrom(boards[depth + 1]);
+            boards[depth].movePiece(move);
+            return evaluateBoard(boards[depth]);
+        }
+        boolean c = (depth % 2 == 0)? !color : color;
+        boards[depth].copyFrom(boards[depth + 1]);
+        boards[depth].movePiece(move);
+        ArrayList<Move> moves = boards[depth].getAllMoves(c);
+        int[] scores = new int[moves.size()];
+        for(int i = 0; i < moves.size(); i++){
+            scores[i] = score2(moves.get(i), boards, depth - 1);
+        }
+        if(moves.size() > 0){
+            return getMinMax(scores, c == color);
+        }
+        return (c == color)? Integer.MIN_VALUE : Integer.MAX_VALUE;
+    }
+    
+    private int getMinMax(int[] arr, boolean max){
+        int value = max? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        for(int x : arr){
+            value = max? Math.max(value, x) : Math.min(value, x);
+        }
+        return value;
+    }
+    
+    private int evaluateBoard(Board board){
+        int value = (board.getComputerScore() - board.getPlayerScore()) * 3;
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                Piece piece = board.getPiece(i, j);
+                if(piece != null && piece.isInDanger()){
+                    value += ((color == piece.getColor())? -1 : 1) * piece.getValue();
+                }
+            }
+        }
+        return value;
     }
 
     private static String arrToString(double[] arr){
