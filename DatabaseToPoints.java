@@ -11,9 +11,14 @@ public class DatabaseToPoints
     private static double[][] inputs = {};
     private static double[][] outputs = {};
     
+    /**
+     * Generates inputs from a dataset of chess games
+     * @param color color of moves to generate from
+     */
     public static void generate(boolean color){
-        long time = System.currentTimeMillis();
         String filePath = "Dataset/First2MB.txt";
+        System.out.println("Generating points using " + filePath);
+        long time = System.currentTimeMillis();
         String data = readFile(filePath);
         String[] games = data.split("\\n*\\[Event \"(.|\\n)*?\\n\\n\\n*");
         //games[0] is ""
@@ -130,10 +135,18 @@ public class DatabaseToPoints
         return arr;
     }
     
+    /**
+     * Gets the generated inputs
+     * @return generated inputs
+     */
     public static double[][] getInputs(){
         return inputs;
     }
     
+    /**
+     * Gets the generated outputs
+     * @return generated outputs
+     */
     public static double[][] getOutputs(){
         return outputs;
     }

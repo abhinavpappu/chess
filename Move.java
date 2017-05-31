@@ -25,23 +25,40 @@ public class Move
         fromCol = col2;
     }
     
+    /**
+     * Gets the destination row
+     * @return the row that piece will go to
+     */
     public int getRow(){
         return toRow;
     }
     
+    /**
+     * Gets the destination column
+     * @return the cplumn that piece will go to
+     */
     public int getCol(){
         return toCol;
     }
     
+    /**
+     * Gets the origin row
+     * @return the row that piece comes from
+     */
     public int getFromRow(){
         return fromRow;
     }
     
+    /**
+     * Gets the origin column
+     * @return the column that piece comes from
+     */
     public int getFromCol(){
         return fromCol;
     }
     
     /**
+     * Executes this Move on a board
      * @param board board to execute move on
      */
     public int execute(Board board){
@@ -69,6 +86,13 @@ public class Move
         return piece2.getValue();
     }
     
+    /**
+     * Generates a Move from a string in standard algebraic notation for chess
+     * @param str String to generate Move from
+     * @param color color of side doing the move
+     * @param board board to execute move on
+     * @return generated Move
+     */
     public static Move fromString(String str, boolean color, Board board){
         if(str.substring(str.length() - 1, str.length()).equals("+") || str.substring(str.length() - 1, str.length()).equals("#")){
             str = str.substring(0, str.length() - 1);
@@ -144,6 +168,11 @@ public class Move
         return -1;
     }
     
+    /**
+     * Checks if this is equivalent to another Object
+     * @param obj Object to check equivalence to
+     * @return boolean indicating whether they are equal
+     */
     @Override
     public boolean equals(Object obj){
         if(obj instanceof Move){
@@ -153,6 +182,10 @@ public class Move
         return false;
     }
     
+    /**
+     * Creates a String representation of the object
+     * return a string representing this object
+     */
     @Override
     public String toString(){
         return letters[fromCol] + (8 - fromRow) + " " + letters[toCol] + (8 - toRow);

@@ -12,7 +12,7 @@ import org.jblas.*;
 public class ComputerPlayer
 {
     private static final int[] structure = {768, 1000, 1000, 1};
-    private boolean color;
+    private boolean color, useNetwork;
     private ANN network;
 
     private static void trainNetwork(boolean color){
@@ -32,7 +32,7 @@ public class ComputerPlayer
         }
         System.out.println("Test input: " + arrToString(test));
         System.out.println("Network prediction before training: " + arrToString(trainingNetwork.predict(test)));
-        int iterations = 1000000;
+        int iterations = 100000;
         double lr = .0001;
         trainingNetwork.train(inputs, outputs, iterations, lr);
         System.out.println("Done training " + iterations + " iterations with a learning rate of " + lr + " in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds");
@@ -42,84 +42,82 @@ public class ComputerPlayer
         saveWeights(color, trainingNetwork);
         System.out.println("Saved weights in " + (System.currentTimeMillis() - time) / 1000.0 + " seconds");
     }
-
+    
+    /**
+     * Trains the white network
+     */
     public static void trainWhiteNetwork(){
         trainNetwork(true);
     }
-
+    
+    /**
+     * Trains the black network
+     */
     public static void trainBlackNetwork(){
         trainNetwork(false);
     }
     
-    public ComputerPlayer(boolean color){
+    /**
+     * Constructor for ComputerPlayer
+     * @param color the color of the ComputerPlayer
+     */
+    public ComputerPlayer(boolean color, boolean useNetwork){
         this.color = color;
-        network = new ANN(structure);
-        loadWeights(color, network);
+        this.useNetwork = useNetwork;
+        if(useNetwork){
+            network = new ANN(structure);
+            loadWeights(color, network);
+        }
     }
     
-    public String compareWeights(ComputerPlayer cp){ //temp
-        double[][][] weights = network.getWeights();
-        double[][][] weights2 = cp.network.getWeights();
-        double[][] biases = network.getBias();
-        double[][] biases2 = cp.network.getBias();
-        for(int i = 0; i < weights.length; i++){
-            for(int j = 0; j < weights[i].length; j++){
-                if(biases[i][j] != biases2[i][j]){
-                    return "Bias at " + i + ", " + j + "\t\t" + biases[i][j] + " != " + biases2[i][j];
-                }
-                for(int k = 0; k < weights[i][j].length; k++){
-                    if(weights[i][j][k] != weights2[i][j][k]){
-                        return "Weight at " + i + ", " + j + ", " + k;
-                    }
-                }
-            }
-        }
-        return "Same";
-    }
-
+    /**
+     * Chooses a move using a neural network and executes it on a board
+     * @param board Board to execute move on
+     */
     public void play(Board board){
-        ArrayList<Move> moves = board.getAllMoves(color);
-        Board board2 = new Board(board);
-        double max = score(moves.get(0), board2);
-        int maxInd = 0;
-        for(int i = 1; i < moves.size(); i++){
-            double output = score(moves.get(i), board2.copyFrom(board));
-            if(output > max){
-                max = output;
-                maxInd = i;
+        if(useNetwork){
+            ArrayList<Move> moves = board.getAllMoves(color);
+            Board board2 = new Board(board);
+            double max = score(moves.get(0), board2);
+            int maxInd = 0;
+            for(int i = 1; i < moves.size(); i++){
+                double output = score(moves.get(i), board2.copyFrom(board));
+                if(output > max){
+                    max = output;
+                    maxInd = i;
+                }
             }
+            board.movePiece(moves.get(maxInd));
         }
-        board.movePiece(moves.get(maxInd));
+        else{
+            ArrayList<Move> moves = board.getAllMoves(color);
+            int num = 3; //number of moves to look ahead
+            int max = Integer.MIN_VALUE;
+            Board[] boards = new Board[num + 1];
+            boards[boards.length - 1] = board;
+            for(int i = 0; i < boards.length - 1; i++){
+                boards[i] = new Board(board);
+            }
+            int[] scores = new int[moves.size()];
+            for(int i = 0; i < moves.size(); i++){
+                scores[i] = score2(moves.get(i), boards, num - 1);
+                if(scores[i] > max){
+                    max = scores[i];
+                }
+            }
+            ArrayList<Move> bestMoves = new ArrayList<Move>();
+            for(int i = 0; i < scores.length; i++){
+                if(scores[i] == max){
+                    bestMoves.add(moves.get(i));
+                }
+            }
+            board.movePiece(bestMoves.get((int)(Math.random() * bestMoves.size())));
+        }
     }
 
     private double score(Move move, Board board){
         board.movePiece(move);
         return network.predict(toInput(board.getPieces()))[0];
-    }
-    
-    public void play2(Board board){
-        ArrayList<Move> moves = board.getAllMoves(color);
-        int num = 3; //number of moves to look ahead
-        int max = Integer.MIN_VALUE;
-        Board[] boards = new Board[num + 1];
-        boards[boards.length - 1] = board;
-        for(int i = 0; i < boards.length - 1; i++){
-            boards[i] = new Board(board);
-        }
-        int[] scores = new int[moves.size()];
-        for(int i = 0; i < moves.size(); i++){
-            scores[i] = score2(moves.get(i), boards, num - 1);
-            if(scores[i] > max){
-                max = scores[i];
-            }
-        }
-        ArrayList<Move> bestMoves = new ArrayList<Move>();
-        for(int i = 0; i < scores.length; i++){
-            if(scores[i] == max){
-                bestMoves.add(moves.get(i));
-            }
-        }
-        board.movePiece(bestMoves.get((int)(Math.random() * bestMoves.size())));
     }
     
     private int score2(Move move, Board[] boards, int depth){
@@ -236,7 +234,12 @@ public class ComputerPlayer
         }
         return nums;
     }
-
+    
+    /**
+     * Loads weights from a file to a network
+     * @param color color of weights to load from
+     * @param network network to load weight to
+     */
     public static void loadWeights(boolean color, ANN network){
         String filePath = "TrainedWeights/" + (color? "White.txt" : "Black.txt");
         try{

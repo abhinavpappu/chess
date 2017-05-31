@@ -23,7 +23,8 @@ public class Board
     private int playerScore;
     private int computerScore;
 
-    /**
+    /** 
+     * Constructor for a board
      * @param playerColor color of player (true - white, false - black)
      */
     public Board(boolean playerColor){
@@ -32,6 +33,10 @@ public class Board
         setUp();
     }
     
+    /**
+     * Constructor for a board from another board
+     * @param board a Board object to copy from
+     */
     public Board(Board board){
         copyFrom(board);
     }
@@ -66,6 +71,10 @@ public class Board
         pieces[0][3 + shift] = new King(!playerColor, 0, 3 + shift);
     }
     
+    /**
+     * Resets the board based on player's color
+     * @param playerColor color of pieces on the bottom of the board
+     */
     public void reset(boolean playerColor){
         for(int i = 0; i < pieces.length; i++){
             for(int j = 0; j < pieces[i].length; j++){
@@ -76,11 +85,15 @@ public class Board
         setUp();
     }
     
+    /**
+     * Resets the board to initial state with the same player color
+     */
     public void reset(){
         reset(playerColor);
     }
 
     /**
+     * Getter for the 2D array of pieces 
      * @return 2d array of pieces
      */
     public Piece[][] getPieces(){
@@ -88,23 +101,31 @@ public class Board
     }
 
     /**
+     * Gets player's color 
      * @return player color (true - white, false - black)
      */
     public boolean getPlayerColor(){
         return playerColor;
     }
     
+    /**
+     * Gets player's score
+     * @return score of player
+     */
     public int getPlayerScore(){
         return playerScore;
     }
     
+    /**
+     * Gets computer's score 
+     * @return score of computer
+     */
     public int getComputerScore(){
         return computerScore;
     }
 
     /**
-     * Gets a piece at a specific location on the board
-     * 
+     * Gets a piece at a specific location on the board 
      * @param row of desired piece
      * @param column of desired piece
      * @return piece at requested position
@@ -114,8 +135,7 @@ public class Board
     }
     
     /**
-     * Moves a piece to desired location
-     * 
+     * Moves a piece to desired location 
      * @param piece piece to move
      * @param row row to move piece to
      * @param col column to move piece to
@@ -126,7 +146,7 @@ public class Board
         ArrayList<Move> moves = piece.getMoves(this);
         int index = moves.indexOf(requestedMove);
         if(index > -1){
-            pieces[piece.getRow()][piece.getColumn()] = piece; //unnecessary
+            pieces[piece.getRow()][piece.getColumn()] = piece;
             int result = moves.get(index).execute(this);
             if(result >= 0){
                 if(piece.getColor() == getPlayerColor()){
@@ -142,6 +162,13 @@ public class Board
         return false;
     }
     
+    /**
+     * Moves a piece to desired location
+     * @param fromIndex index of piece to move
+     * @param toIndex index of square to move to
+     * @param color the color that the piece should be
+     * @return boolean indicating whether the move succeeded
+     */
     public boolean movePiece(int fromIndex, int toIndex, boolean color){
         Piece piece = getPiece(fromIndex / 8, fromIndex % 8);
         if(piece != null){
@@ -153,6 +180,11 @@ public class Board
         return false;
     }
     
+    /**
+     * Moves a piece to desired location
+     * @param move Move object representing desired move
+     * @return boolean indicating whether the move succeeded
+     */
     public boolean movePiece(Move move){
         Piece piece = getPiece(move.getFromRow(), move.getFromCol());
         if(piece != null){
@@ -171,6 +203,9 @@ public class Board
         return false;
     }
     
+    /**
+     * Updates which pieces are in danger of being attacked by another piece
+     */
     public void updateInDangers(){
         for(Piece[] row : pieces){
             for(Piece piece : row){
@@ -190,6 +225,11 @@ public class Board
         }
     }
     
+    /**
+     * Checks if the king is in check 
+     * @param color the color of the side to check
+     * @return boolean indicating whether the king is in check
+     */
     public boolean isCheck(boolean color){
         for(Piece[] row : pieces){
             for(Piece piece : row){
@@ -200,7 +240,13 @@ public class Board
         }
         return false;
     }
-
+    
+    /**
+     * Gets all possible moves by all pieces of a color on the board 
+     * @param color color of side to get moves from
+     * @param removeCheck whether to remove the moves that cause a check on the color's side
+     * @return an ArrayList of possible moves
+     */
     public ArrayList<Move> getAllMoves(boolean color, boolean removeCheck){
         ArrayList<Move> moves = new ArrayList<Move>();
         for(Piece[] row : pieces){
@@ -213,16 +259,32 @@ public class Board
         return moves;
     }
     
+    /**
+     * Gets all legal moves by all pieces of a color on the board
+     * @param color color of side to get moves from
+     * @return an ArrayList of legal moves
+     */
     public ArrayList<Move> getAllMoves(boolean color){
         return getAllMoves(color, true);
     }
     
+    /**
+     * Checks whether a side would be in check after executing a move
+     * @param move Move to execute
+     * @param color color of side to check
+     * @return whether the side would be in check
+     */
     public boolean wouldBeCheck(Move move, boolean color){
         Board board = new Board(this);
         move.execute(board);
         return board.isCheck(color);
     }
     
+    /**
+     * Safely copies everything from another Board without any of the same objects 
+     * @param board Board to copy from
+     * @return itself
+     */
     public Board copyFrom(Board board){
         pieces = new Piece[8][8];
         for(int i = 0; i < pieces.length; i++){
@@ -235,7 +297,11 @@ public class Board
         computerScore = board.getComputerScore();
         return this;
     }
-
+    
+    /**
+     * Creates a String representation of the object
+     * return a string representing this object
+     */
     public String toString(){
         String[] pieceLetters = {"WPAWN", "WKNIG", "WBISH", "WROOK", "WQUEE", "WKING", "BPAWN", "BKNIG", "BBISH", "BROOK", "BQUEE", "BKING"};
         String[] letters = {"a", "b", "c", "d", "e", "f", "g", "h"};

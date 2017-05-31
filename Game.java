@@ -13,7 +13,7 @@ public class Game
     public static void main(String[] args){
         JFrame frame = new JFrame("Chess");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 500);
+        frame.setSize(800, 800);
         askColor(frame);
     }
     
@@ -23,11 +23,15 @@ public class Game
         whiteButton.setBackground(Color.WHITE);
         whiteButton.setFont(new Font("Helvetica", Font.BOLD, 75));
         whiteButton.setFocusPainted(false);
+        whiteButton.setOpaque(true);
+        whiteButton.setBorderPainted(false);
         JButton blackButton = new JButton("Black");
         blackButton.setBackground(Color.BLACK);
         blackButton.setForeground(Color.WHITE);
-        blackButton.setFont(new Font("Helvetic", Font.BOLD, 75));
+        blackButton.setFont(new Font("Helvetica", Font.BOLD, 75));
         blackButton.setFocusPainted(false);
+        blackButton.setOpaque(true);
+        blackButton.setBorderPainted(false);
         frame.add(whiteButton);
         frame.add(blackButton);
         frame.setVisible(true);
@@ -35,14 +39,48 @@ public class Game
         whiteButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 removeAll(frame);
-                setUpBoard(frame, true);
+                playAgainst(frame, true);
             }
         });
         
         blackButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 removeAll(frame);
-                setUpBoard(frame, false);
+                playAgainst(frame, false);
+            }
+        });
+    }
+    
+    private static void playAgainst(JFrame frame, boolean playerColor){
+        frame.setLayout(new GridLayout(2, 1));
+        JButton b1 = new JButton("<html><p style='text-align:center'>Classic Algorithm<br>(Recommended for now)</p></html>");
+        b1.setBackground(Color.WHITE);
+        b1.setFont(new Font("Helvetica", Font.BOLD, 40));
+        b1.setFocusPainted(false);
+        b1.setOpaque(true);
+        b1.setBorderPainted(false);
+        JButton b2 = new JButton("<html><p style='text-align:center'>Neural Network<br>(Still needs to be trained a lot more)</p></html>");
+        b2.setBackground(Color.BLACK);
+        b2.setForeground(Color.WHITE);
+        b2.setFont(new Font("Helvetica", Font.BOLD, 40));
+        b2.setFocusPainted(false);
+        b2.setOpaque(true);
+        b2.setBorderPainted(false);
+        frame.add(b1);
+        frame.add(b2);
+        frame.revalidate();
+        
+        b1.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                removeAll(frame);
+                setUpBoard(frame, playerColor, false);
+            }
+        });
+        
+        b2.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+                removeAll(frame);
+                setUpBoard(frame, playerColor, true);
             }
         });
     }
@@ -53,11 +91,11 @@ public class Game
         frame.repaint();
     }
     
-    private static void setUpBoard(JFrame frame, boolean playerColor){
+    private static void setUpBoard(JFrame frame, boolean playerColor, boolean againstNetwork){
         Color boardWhite = new Color(176, 190, 197), boardBlack = new Color(84, 110, 122);
         frame.setLayout(new GridLayout(8, 8));
         Board board = new Board(playerColor);
-        ComputerPlayer cp = new ComputerPlayer(!playerColor);
+        ComputerPlayer cp = new ComputerPlayer(!playerColor, againstNetwork);
         JPanel[][] squares = new JPanel[8][8];
         JLabel[][] labels = new JLabel[8][8];
         for(int i = 0; i < 8; i++){
