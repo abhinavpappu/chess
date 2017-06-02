@@ -12,14 +12,14 @@ public class Tester
         double[][] inputs = new double[150][1];
         double[][] outputs = new double[150][1];
         for(int i = 0; i < inputs.length; i++){
-            inputs[i][0] = i * (2 * Math.PI / inputs.length);
+            inputs[i][0] = i * (Math.PI / inputs.length) - Math.PI / 2;
             outputs[i][0] = Math.sin(inputs[i][0]);
         }
         System.out.println("Training Data:");
         System.out.println(arrToString(inputs));
         System.out.println(arrToString(outputs));
         DoubleMatrix test = new DoubleMatrix(1, 1, Math.PI / 3);
-        int[] structure = {1, 100, 50, 1};
+        int[] structure = {1, 1};
         ANN network = new ANN(structure);
         System.out.println("sin(π/3) = " + Math.sin(test.get(0, 0)));
         System.out.println("Before Training: sin(π/3) ≈ " + network.predict(test));

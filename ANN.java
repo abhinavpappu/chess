@@ -69,12 +69,16 @@ public class ANN
         }
         return arr2;
     }
+    
+    private int sign(int x){
+        return x == 0? 0 : x / Math.abs(x);
+    }
 
     private void trainOne(DoubleMatrix x, DoubleMatrix y, double lr){
         DoubleMatrix output = predict(x);
         DoubleMatrix error;
         DoubleMatrix error2 = null;
-        for(int l = layers.length - 1; l > 0; l--){
+        for(int l = layers.length - 1; l >= 0; l--){
             if(l == layers.length - 1){
                 error = outputs[l + 1].sub(y);
             }
